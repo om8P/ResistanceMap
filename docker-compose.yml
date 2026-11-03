@@ -1,0 +1,13 @@
+services:
+  spark:
+    image: apache/spark:4.0.5-python3
+    container_name: resistancemap-spark
+    working_dir: /work
+    command: ["tail", "-f", "/dev/null"]
+    mem_limit: 5g
+    environment:
+      - SPARK_LOCAL_DIRS=/tmp/spark-local
+      - HOME=/tmp
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - .:/work
