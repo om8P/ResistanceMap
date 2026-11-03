@@ -4,12 +4,13 @@ Keep this file under about 60 lines. Replace old status instead of adding a log.
 
 ## Status
 - **Last updated:** 2026-11-04
-- **Done:** Session 1. Row counts match on all 14 files, profile saved, 31 tests pass. Not yet committed.
-- **Next:** Session 2. Start Docker Desktop and the container first.
+- **Done:** Sessions 1 and 2. 91 tests pass. Session 2 and the md updates are not yet committed.
+- **Session 2 results:** 1,991,177 isolates and 11,274,636 gene rows. Catalog match 99.465 to 99.998% by organism. `SAMN02147118` gives its six genes with drug classes. Details in `results/pipeline_summary.json`.
+- **Next:** Session 3. Start Docker Desktop and the container first.
 
 ## Sessions
 - [x] 1. Setup and data audit
-- [ ] 2. Cleaning and gene pipeline
+- [x] 2. Cleaning and gene pipeline
 - [ ] 3. Spatiotemporal analytics
 - [ ] 4. Streamlit app
 - [ ] 5. Report, slides, viva prep
@@ -17,7 +18,7 @@ Keep this file under about 60 lines. Replace old status instead of adding a log.
 ## Environment
 - Host: Python 3.11.9 with pandas, matplotlib, streamlit, plotly, pyarrow, pytest, psutil. No PySpark, so tests run in the container.
 - Docker 29.9.2, about 7.6 GiB for the engine. Container: Spark 4.0.5, Python 3.10.12, capped at 5 GB.
-- Data: `data/raw` 2.0 GB, `data/parquet` 282 MB.
+- Data: `data/raw` 2.0 GB.
 
 ## Working commands
 ```bash
@@ -26,10 +27,12 @@ docker compose up -d
 python src/download.py   # add --organism NAME for one
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/ingest.py
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/profile_data.py
+MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/clean.py
+MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/genes.py
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pip install -q --user pytest   # again if the container is recreated
-MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pytest tests -q -p no:cacheprovider
+MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pytest tests -q -p no:cacheprovider   # over 5 minutes, run in the background
 ```
-Timing: ingest of all six 398 s, profile of all six 247 s.
+Timing, all six: ingest 398 s, profile 247 s, clean 191 s, genes 264 s.
 
 ## Data findings
 From `results/data_profile.json`. Percent with real values, placeholders such as `missing` excluded. "Upload" is the percent uploaded within 5 years of collection.
@@ -51,18 +54,27 @@ From `results/data_profile.json`. Percent with real values, placeholders such as
 - **Sampling skew:** USA is 44.52% of rows, and 570,664 of Salmonella's rows.
 - **Analysis method:** E. coli isolates with no core genes are 28.78% under `COMBINED` and 13.81% under `NUCLEOTIDE`. Method may affect detection; not yet explained.
 
-**For Session 2 (`clean.py`)**
-- 374 rows repeat a `biosample_acc`: needs a rule for which to keep.
-- Placeholders can carry a reason (`missing: third party data`), so match the start of the value.
-- Multi-year date ranges have no single year, for example 2,820 in Salmonella. Timestamps have a valid year.
-- 14 rows have impossible years (before 1900 or after 2026), such as `2919`.
+**Pipeline (`results/pipeline_summary.json`)**
+- 1,991,177 isolates kept. 2 rows dropped (no ID), 373 duplicates removed; in 155 groups the duplicates' genes differed. 717,879 isolates have no core genes and stay in the denominator.
+- Usable country 89.64% (missing 9.25, placeholder 1.10, unrecognised 230 rows). Usable year 85.91% (missing 13.50, multi-year range 0.57, impossible 281 rows). 77.09% of isolates are in a cluster.
+- 11,274,636 gene rows, equal to the distinct input entries, so no join multiplied rows. Catalog match 99.878% (13,755 unmapped, mostly `dfrA51` and generic `=HMM` names). Lowest: Salmonella 99.465%.
+
+**For Session 3 (`analytics.py`)**
+- **Last-resort tracker overcounts if it only matches `CARBAPENEM`.** Of 506,008 carbapenem rows, 130,806 are point mutations and 99,624 disrupted genes, and `blaOXA-66` (38,855) is intrinsic to Acinetobacter. Use `match_source` to separate acquired genes from these.
+- **First-seen needs support.** Single old records remain: `blaNDM` in 1943, 1968 and 1984, `mcr-1` in 1975 and 1984. A minimum count is needed, not the earliest year.
+- **Empty subclass:** 121,959 rows have a class but no subclass, because the family mixes drugs (`blaOXA`, `blaTEM`). Bare `blaKPC` (749) is among them, so carbapenem is slightly undercounted there.
+- Skip `drug_class = NONE` (inactive allele, 1 row). Split combined drugs on `/`.
 - 40 to 55% of real dates are year only, so stay at yearly resolution.
+- `China: Hong Kong` counts as China and plain `Hong Kong` separately, following the text before the colon. Not measured.
 
 ## Results so far
-Audit only: `results/ingest_counts.json`, `results/data_profile.json`.
+Audit and pipeline only: `results/ingest_counts.json`, `results/data_profile.json`, `results/pipeline_summary.json`.
 
 ## Changes to the plan
 - Added to Session 1: `AMRProt-mutation.tsv` download, Pseudomonas Metadata check, upload delay and analysis coverage in the profile, and `tests/` for the profile rules.
+- Session 2: gene lookup uses each organism's taxon, plus disrupted-gene and whole-family steps, recorded in `match_source`. Where catalog rows differ, only drugs they all share are kept. Earliest valid year raised to 1910, because 1900 to 1909 dates are artefacts such as `1900-01-01` and years read as Excel day counts.
+- Added after the core: pathogen search and import (`PLAN.md`). This changes two fixed decisions: the six-organism limit, and the app needing only prepared files, which now applies to browsing but not import. Nothing built yet.
+- Added to Sessions 3 to 5: richer visuals with chart rules, and `coverage.parquet` (`PLAN.md`). Nothing built yet.
 
 ## Known issues
 - One profile run reported 36,007 s (about 10 hours). The re-run took 247 s. Cause unknown, so do not use that figure.

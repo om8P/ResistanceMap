@@ -30,6 +30,7 @@ Do not revisit these unless something blocks the work. Record any change in `PRO
 - Storage: Parquet files.
 - App: Streamlit on the host, reading only prepared files in `results/`, so it works with Docker stopped.
 - Features: map and trends, hotspots, early warning feed, last-resort drug tracker, country report, gene profile, confidence indicators, outbreak-adjusted view.
+- Planned exception, after the core only: pathogen search and import (see `PLAN.md`) can go beyond the six organisms. Browsing stays offline with Docker stopped; only import needs Docker and internet access.
 - Out of scope: treatment suggestions, outbreak prediction, "worst country" rankings, AI chatbots, Kafka, Hadoop, Redis.
 
 ## Rules for results

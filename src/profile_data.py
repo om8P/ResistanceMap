@@ -81,7 +81,11 @@ def fill_rates(frame, total):
 
 def label_dates(frame):
     """Add date_format and year columns to rows with a real collection_date."""
-    usable = frame.filter(is_real("collection_date"))
+    return add_date_labels(frame.filter(is_real("collection_date")))
+
+
+def add_date_labels(frame):
+    """Add date_format and year columns, keeping every row."""
     start = F.regexp_extract("collection_date", r"^(\d{4})", 1)
     end = F.regexp_extract("collection_date", r"/(\d{4})", 1)
     label = F.lit("other")
@@ -90,7 +94,7 @@ def label_dates(frame):
     label = (F.when(F.col("collection_date").contains("/") & (start != "") & (start == end), "range_same_year")
              .when(F.col("collection_date").contains("/") & (start != "") & (end != ""), "range_multi_year")
              .otherwise(label))
-    return usable.withColumn("date_format", label).withColumn("year", start)
+    return frame.withColumn("date_format", label).withColumn("year", start)
 
 
 def single_year_rows(labelled):

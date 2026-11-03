@@ -1,0 +1,391 @@
+{
+  "organisms": {
+    "Pseudomonas_aeruginosa": {
+      "clean": {
+        "rows_in": 67170,
+        "rows_dropped_no_biosample": 0,
+        "duplicate_groups": 8,
+        "duplicate_rows_removed": 8,
+        "duplicate_groups_with_different_genes": 5,
+        "isolates_kept": 67162,
+        "location_flags": {
+          "placeholder": 4881,
+          "unrecognised": 11,
+          "missing": 4211,
+          "None": 58059
+        },
+        "unrecognised_locations": {
+          "Pacific Ocean": 9,
+          "Indian Ocean": 2
+        },
+        "year_flags": {
+          "out_of_range": 7,
+          "multi_year_range": 1339,
+          "missing": 13148,
+          "None": 52668
+        },
+        "isolates_in_cluster": 42908,
+        "isolates_with_no_core_genes": 0
+      },
+      "genes": {
+        "gene_rows": 646679,
+        "repeats_removed": 0,
+        "by_match_source": {
+          "family": 224786,
+          "mutation": 131206,
+          "family_ambiguous": 10119,
+          "unmapped": 2707,
+          "disrupt": 37973,
+          "allele": 239888
+        },
+        "catalog_match_pct": 99.581,
+        "rows_without_drug_class": 2707,
+        "rows_without_drug_subclass": 9422,
+        "rows_inactive_allele": 1,
+        "top_unmapped": {
+          "aph(3'') (HMM)": 1459,
+          "aac(3) (HMM)": 1030,
+          "aac(3)-C322 (COMPLETE)": 87,
+          "ant(3'') (HMM)": 42,
+          "aph(3') (HMM)": 26,
+          "aac(3)-II (HMM)": 23,
+          "erm (HMM)": 19,
+          "aac(3)-II (COMPLETE)": 3,
+          "tet (HMM)": 3,
+          "aac(6')-Ie (HMM)": 2,
+          "ant(4') (HMM)": 2,
+          "aph(2'')-Ia (HMM)": 2,
+          "aph(3')-I (HMM)": 2,
+          "dfr (COMPLETE)": 2,
+          "aac(3)-IV (PARTIAL_END_OF_CONTIG)": 1,
+          "ant(6) (HMM)": 1,
+          "aph(6)-I (HMM)": 1,
+          "dfr (PARTIAL_END_OF_CONTIG)": 1,
+          "vat (HMM)": 1
+        }
+      }
+    },
+    "Salmonella": {
+      "clean": {
+        "rows_in": 908677,
+        "rows_dropped_no_biosample": 2,
+        "duplicate_groups": 36,
+        "duplicate_rows_removed": 52,
+        "duplicate_groups_with_different_genes": 3,
+        "isolates_kept": 908623,
+        "location_flags": {
+          "placeholder": 8504,
+          "unrecognised": 34,
+          "missing": 51377,
+          "None": 848708
+        },
+        "unrecognised_locations": {
+          "Poland/Hungary": 16,
+          "Korea": 11,
+          "Pacific Ocean": 4,
+          "Yugoslavia": 2,
+          "Antilles": 1
+        },
+        "year_flags": {
+          "out_of_range": 67,
+          "multi_year_range": 2820,
+          "missing": 76621,
+          "None": 829115
+        },
+        "isolates_in_cluster": 829756,
+        "isolates_with_no_core_genes": 567832
+      },
+      "genes": {
+        "gene_rows": 1412465,
+        "repeats_removed": 0,
+        "by_match_source": {
+          "family": 969713,
+          "mutation": 152988,
+          "family_ambiguous": 12686,
+          "unmapped": 7562,
+          "disrupt": 772,
+          "allele": 268744
+        },
+        "catalog_match_pct": 99.465,
+        "rows_without_drug_class": 7562,
+        "rows_without_drug_subclass": 17057,
+        "rows_inactive_allele": 0,
+        "top_unmapped": {
+          "dfrA51 (COMPLETE)": 6683,
+          "dfrA51 (HMM)": 272,
+          "aac(3)-IV (COMPLETE)": 104,
+          "aph(3'') (HMM)": 94,
+          "aac(3)-IV (PARTIAL_END_OF_CONTIG)": 91,
+          "ant(3'') (HMM)": 68,
+          "erm (HMM)": 56,
+          "mph (HMM)": 50,
+          "vat (HMM)": 32,
+          "aac(3)-IV (PARTIAL)": 17,
+          "dfr (COMPLETE)": 14,
+          "aac(3)-II (PARTIAL_END_OF_CONTIG)": 12,
+          "aac(3)-II (HMM)": 10,
+          "aac(3)-II (PARTIAL)": 9,
+          "dfrA51 (PARTIAL_END_OF_CONTIG)": 9,
+          "aac(3)-C322 (COMPLETE)": 8,
+          "aph(3')-I (HMM)": 5,
+          "dfrA51 (MISTRANSLATION)": 5,
+          "dfrA51 (PARTIAL)": 4,
+          "tet (HMM)": 3
+        }
+      }
+    },
+    "Escherichia_coli_Shigella": {
+      "clean": {
+        "rows_in": 592815,
+        "rows_dropped_no_biosample": 0,
+        "duplicate_groups": 146,
+        "duplicate_rows_removed": 149,
+        "duplicate_groups_with_different_genes": 52,
+        "isolates_kept": 592666,
+        "location_flags": {
+          "placeholder": 3562,
+          "unrecognised": 107,
+          "missing": 73743,
+          "None": 515254
+        },
+        "unrecognised_locations": {
+          "USSR": 43,
+          "Baltic Sea": 30,
+          "Korea": 20,
+          "Czechoslovakia": 10,
+          "Atlantic Ocean": 1,
+          "France and Algeria": 1,
+          "OUTPATIENT": 1,
+          "Pacific Ocean": 1
+        },
+        "year_flags": {
+          "out_of_range": 181,
+          "multi_year_range": 3489,
+          "missing": 101727,
+          "None": 487269
+        },
+        "isolates_in_cluster": 383258,
+        "isolates_with_no_core_genes": 145465
+      },
+      "genes": {
+        "gene_rows": 4008076,
+        "repeats_removed": 0,
+        "by_match_source": {
+          "mutation": 861160,
+          "family": 2339750,
+          "family_ambiguous": 43993,
+          "unmapped": 1283,
+          "disrupt": 125602,
+          "allele": 636288
+        },
+        "catalog_match_pct": 99.968,
+        "rows_without_drug_class": 1283,
+        "rows_without_drug_subclass": 12879,
+        "rows_inactive_allele": 0,
+        "top_unmapped": {
+          "ant(3'') (HMM)": 441,
+          "erm (HMM)": 199,
+          "mph (HMM)": 161,
+          "dfr (COMPLETE)": 144,
+          "aac(3)-II (PARTIAL_END_OF_CONTIG)": 78,
+          "aac(3)-II (PARTIAL)": 43,
+          "aac(3)-IV (COMPLETE)": 24,
+          "tet (HMM)": 23,
+          "glpT_E448K (POINT)": 22,
+          "aph(3'') (HMM)": 20,
+          "mle (HMM)": 18,
+          "aph(3')-I (HMM)": 17,
+          "aac(3)-II (HMM)": 13,
+          "pmrB_Y358N (POINT)": 10,
+          "aac(3)-C322 (COMPLETE)": 9,
+          "vat (HMM)": 9,
+          "aac(3)-II (COMPLETE)": 7,
+          "dfr (PARTIAL_END_OF_CONTIG)": 7,
+          "pmrB_E123D (POINT)": 7,
+          "aac(3) (HMM)": 5
+        }
+      }
+    },
+    "Klebsiella": {
+      "clean": {
+        "rows_in": 178938,
+        "rows_dropped_no_biosample": 0,
+        "duplicate_groups": 140,
+        "duplicate_rows_removed": 140,
+        "duplicate_groups_with_different_genes": 93,
+        "isolates_kept": 178798,
+        "location_flags": {
+          "placeholder": 1546,
+          "unrecognised": 12,
+          "missing": 16988,
+          "None": 160252
+        },
+        "unrecognised_locations": {
+          "Korea": 12
+        },
+        "year_flags": {
+          "out_of_range": 4,
+          "multi_year_range": 1529,
+          "missing": 30332,
+          "None": 146933
+        },
+        "isolates_in_cluster": 123787,
+        "isolates_with_no_core_genes": 0
+      },
+      "genes": {
+        "gene_rows": 2779013,
+        "repeats_removed": 0,
+        "by_match_source": {
+          "family": 1286088,
+          "mutation": 315658,
+          "family_ambiguous": 74459,
+          "unmapped": 639,
+          "disrupt": 78243,
+          "allele": 1023926
+        },
+        "catalog_match_pct": 99.977,
+        "rows_without_drug_class": 639,
+        "rows_without_drug_subclass": 81319,
+        "rows_inactive_allele": 0,
+        "top_unmapped": {
+          "erm (HMM)": 295,
+          "ant(3'') (HMM)": 109,
+          "aac(3)-II (PARTIAL_END_OF_CONTIG)": 69,
+          "aac(3)-II (PARTIAL)": 40,
+          "aac(3)-IV (PARTIAL)": 23,
+          "aph(3'') (HMM)": 20,
+          "aph(3')-I (HMM)": 18,
+          "mph (HMM)": 10,
+          "aac(3)-II (HMM)": 9,
+          "vat (HMM)": 9,
+          "aph(3') (HMM)": 8,
+          "aac(3) (HMM)": 7,
+          "aac(3)-IV (PARTIAL_END_OF_CONTIG)": 4,
+          "aac(3)-II (MISTRANSLATION)": 3,
+          "aac(3)-IV (MISTRANSLATION)": 2,
+          "blaOKP (HMM)": 2,
+          "pmrB_R256G (POINT)": 2,
+          "tet (HMM)": 2,
+          "aac(3)-C322 (COMPLETE)": 1,
+          "aac(3)-II (COMPLETE)": 1
+        }
+      }
+    },
+    "Staphylococcus_aureus": {
+      "clean": {
+        "rows_in": 179096,
+        "rows_dropped_no_biosample": 0,
+        "duplicate_groups": 13,
+        "duplicate_rows_removed": 13,
+        "duplicate_groups_with_different_genes": 1,
+        "isolates_kept": 179083,
+        "location_flags": {
+          "placeholder": 2413,
+          "unrecognised": 40,
+          "missing": 33570,
+          "None": 143060
+        },
+        "unrecognised_locations": {
+          "Korea": 40
+        },
+        "year_flags": {
+          "out_of_range": 6,
+          "multi_year_range": 1767,
+          "missing": 40426,
+          "None": 136884
+        },
+        "isolates_in_cluster": 99445,
+        "isolates_with_no_core_genes": 4582
+      },
+      "genes": {
+        "gene_rows": 1598738,
+        "repeats_removed": 0,
+        "by_match_source": {
+          "family": 1023862,
+          "mutation": 426417,
+          "unmapped": 1546,
+          "family_ambiguous": 119,
+          "disrupt": 1378,
+          "allele": 145416
+        },
+        "catalog_match_pct": 99.903,
+        "rows_without_drug_class": 1546,
+        "rows_without_drug_subclass": 1662,
+        "rows_inactive_allele": 0,
+        "top_unmapped": {
+          "aac(6')-Ie (HMM)": 797,
+          "aph(2'')-Ia (HMM)": 443,
+          "tet (COMPLETE)": 171,
+          "aph(2'')-I (HMM)": 48,
+          "vga (HMM)": 46,
+          "erm (HMM)": 9,
+          "tet (PARTIAL_END_OF_CONTIG)": 7,
+          "msr (HMM)": 6,
+          "dfr (HMM)": 3,
+          "fosM (HMM)": 3,
+          "mec (HMM)": 3,
+          "aac(6')-Ie (COMPLETE)": 2,
+          "aph(3') (HMM)": 2,
+          "tet (HMM)": 2,
+          "vanR (HMM)": 2,
+          "lsa (HMM)": 1,
+          "lsa (PARTIAL_END_OF_CONTIG)": 1
+        }
+      }
+    },
+    "Acinetobacter": {
+      "clean": {
+        "rows_in": 64856,
+        "rows_dropped_no_biosample": 0,
+        "duplicate_groups": 11,
+        "duplicate_rows_removed": 11,
+        "duplicate_groups_with_different_genes": 1,
+        "isolates_kept": 64845,
+        "location_flags": {
+          "placeholder": 1009,
+          "unrecognised": 26,
+          "missing": 4252,
+          "None": 59558
+        },
+        "unrecognised_locations": {
+          "Korea": 16,
+          "Germany/Syria": 7,
+          "Germany/Libya": 2,
+          "Pacific Ocean": 1
+        },
+        "year_flags": {
+          "out_of_range": 16,
+          "multi_year_range": 481,
+          "missing": 6523,
+          "None": 57825
+        },
+        "isolates_in_cluster": 55792,
+        "isolates_with_no_core_genes": 0
+      },
+      "genes": {
+        "gene_rows": 829665,
+        "repeats_removed": 0,
+        "by_match_source": {
+          "family": 469554,
+          "mutation": 138551,
+          "family_ambiguous": 13557,
+          "unmapped": 18,
+          "allele": 207985
+        },
+        "catalog_match_pct": 99.998,
+        "rows_without_drug_class": 18,
+        "rows_without_drug_subclass": 13375,
+        "rows_inactive_allele": 0,
+        "top_unmapped": {
+          "mph (HMM)": 7,
+          "aac(3)-II (PARTIAL_END_OF_CONTIG)": 5,
+          "erm (HMM)": 2,
+          "aac(3)-C322 (COMPLETE)": 1,
+          "ant(3'') (HMM)": 1,
+          "ant(3'')-II (COMPLETE)": 1,
+          "ant(3'')-II (PARTIAL)": 1
+        }
+      }
+    }
+  }
+}

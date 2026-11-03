@@ -1,6 +1,6 @@
 # ResistanceMap architecture
 
-Planned design. Built so far: download, ingest and profile. Update this file if the design changes during a session.
+Planned design. Built so far: download, ingest, profile, clean and genes. Update this file if the design changes during a session.
 
 ## Overview
 ```
@@ -42,8 +42,10 @@ Organism folders: `Salmonella`, `Escherichia_coli_Shigella`, `Klebsiella`, `Stap
 ## Tables
 | Table | One row per | Main columns |
 |---|---|---|
-| `isolates` | Isolate | `biosample_acc`, `target_acc`, `organism`, `country`, `year`, `host`, `isolation_source`, `epi_type`, `cluster_id` |
-| `isolate_genes` | Isolate and gene | `biosample_acc`, `gene`, `gene_type`, `drug_class`, `drug_subclass`, plus `organism`, `country`, `year` and `cluster_id` |
+| `isolates` | Isolate | `biosample_acc`, `target_acc`, `organism`, `organism_label`, `country`, `iso3`, `raw_location`, `location_flag`, `year`, `year_flag`, `collection_date`, `host`, `isolation_source`, `epi_type`, `cluster_id`, `amrfinder_analysis_type`, `AMR_genotypes_core` |
+| `isolate_genes` | Isolate and gene | `biosample_acc`, `gene`, `gene_type`, `drug_class`, `drug_subclass`, `match_source`, plus `organism`, `organism_label`, `country`, `iso3`, `year` and `cluster_id` |
+
+Both are in `data/parquet/`, in `organism=<name>` folders. `gene_type` is the suffix, or `COMPLETE` if there is none.
 
 **Parsing rules seen in the real file**
 - Missing values are the text `NULL`.
@@ -57,9 +59,19 @@ Organism folders: `Salmonella`, `Escherichia_coli_Shigella`, `Klebsiella`, `Stap
 - `collection_date` can also be a range (`2015/2018`) or a timestamp (`2019-09-26T10:00:04Z`).
 
 **Join columns**
-- Gene catalog: `allele`, then `gene_family`, giving `class` and `subclass`.
-- Point mutations: `#taxgroup` and `standard_mutation_symbol`, giving `class` and `subclass`. The first column's name starts with `#`.
-- Cluster lists (`PDS_acc`, `target_acc`, `biosample_acc`, `gencoll_acc`): join on `biosample_acc` and use `PDS_acc` as `cluster_id`.
+- Gene catalog: `allele` and `gene_family`, giving `class` and `subclass`. Use rows for the organism's taxon (`config/organisms.csv`) if any exist, otherwise rows open to all taxa.
+- Point mutations: `taxgroup` and `standard_mutation_symbol`, giving `class` and `subclass`. Ingest removes the `#` from the first column's name.
+- Cluster lists (`PDS_acc`, `target_acc`, `biosample_acc`, `gencoll_acc`): join on `biosample_acc` and use `PDS_acc` as `cluster_id`. If there are several, prefer the same `target_acc`, then the lowest `PDS_acc`.
+
+**Gene lookup order**, recorded in `match_source`:
+- `=POINT` entries: `mutation`, then `allele`, then `disrupt` (gene name before `_`, `POINT_DISRUPT` catalog rows).
+- Other entries: `allele`, then `family` (family-level row), then `family_ambiguous` (all active rows of the family).
+- No match: `unmapped`, with empty drug fields.
+- Where rows differ, keep only the drugs all of them list: `blaNDM` stays `CARBAPENEM`, and `blaOXA` gets no subclass.
+
+**Flags:** rows are kept with an empty value and a reason. `location_flag`: `missing`, `placeholder`, `unrecognised`. `year_flag`: `missing`, `multi_year_range`, `unparsed`, `out_of_range` (before 1910 or after the latest upload year), `after_upload`.
+
+**Gene lookup as built:** each entry takes one lookup, recorded in `match_source`, preferring the isolate's own taxon. `=POINT` entries try `mutation`, `allele`, then `disrupt`. Others try `allele`, `family`, then `family_ambiguous`, which keeps drug fields only where the catalog rows agree. No match gives `unmapped`.
 
 **Combined drug values:** `class` can be `MULTIDRUG` or slash-separated, and `subclass` can be `CARBAPENEM/VABORBACTAM`. Split on `/` and count the gene towards each drug listed.
 
@@ -92,6 +104,13 @@ Recent years are incomplete, because samples are uploaded long after collection.
 | Country report | What should someone in this country know? | Several |
 | Confidence indicators | How far can I trust this number? | Columns on all tables |
 | Outbreak-adjusted view | Is this a trend or one outbreak? | `*_adjusted` versions |
+| Gene spread timeline | When did this gene reach each country? | `first_seen` |
+| Country by year heatmap | Where and when did rates rise? | `prevalence` |
+| Early warning timeline (optional) | What arrived recently, on how much evidence? | `early_warnings` |
+| Organism by drug class heatmap (optional) | Which resistance matters for which pathogen? | `prevalence` |
+| Data coverage chart (optional) | Can I trust this view? | `coverage` |
+| Pathogen search (optional, after the core) | Is this pathogen, strain or disease covered, and how good is the data? | `data_profile.json`, `pipeline_summary.json`, `config/disease_pathogens.csv` |
+| Pathogen import (optional, last) | Can I analyse a pathogen not yet imported? | Runs the pipeline; needs Docker and internet |
 
 ## Result files
 All in `results/`.
@@ -101,6 +120,7 @@ All in `results/`.
 | `data_profile.json` | Fill rates, date formats, country and year coverage |
 | `pipeline_summary.json` | Rows kept, flagged and dropped; catalog match rate |
 | `prevalence.parquet`, `prevalence_adjusted.parquet` | Rate, counts and confidence limits |
+| `coverage.parquet` | Isolates by organism, country and year |
 | `first_seen.parquet` | Gene, country and first year |
 | `rising.parquet` | Trend per gene or drug class and country |
 | `hotspots.parquet` | Flagged groups |
