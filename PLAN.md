@@ -12,11 +12,12 @@ Five sessions over 3 days, leaving Day 3 afternoon as a buffer. Start each sessi
 
 If time runs short, cut in this order. Always keep the map, trends, confidence indicators and early warning feed.
 1. Pathogen import, then pathogen search (see the Pathogen search section).
-2. Optional visuals: early warning timeline, organism by drug class heatmap, data coverage chart.
-3. Country report download (keep the page).
-4. Outbreak-adjusted view.
-5. Gene profile page.
-6. Organisms: drop Salmonella and E. coli last, since they have the most data.
+2. Clinician evidence panel, then the GLASS comparison, then cluster watch.
+3. Optional visuals: early warning timeline, organism by drug class heatmap, data coverage chart.
+4. Country report download (keep the page).
+5. Outbreak-adjusted view.
+6. Gene profile page.
+7. Organisms: drop Salmonella and E. coli last, since they have the most data.
 
 ## Pathogen search (after the core)
 Build the core first. This extends it, and is not part of any "done when" check. Sessions 2 and 3 should take any organism name rather than assume the six.
@@ -105,6 +106,16 @@ Use data in `data_profile.json` to label or hide views where a field is too spar
 - On the map, "no data" looks clearly different from 0%.
 - No "worst country" rankings. Sort by first detection or name.
 - One colourblind-safe palette across the app.
+
+**Added after Session 3**
+- **Guided questions:** fixed dropdown questions answered from the tables, offline and with no AI, saying when there is too little data.
+- **Compare countries:** a few chosen countries side by side, with counts, limits and GLASS figures. No rank numbers, sorted by name.
+- **Clinical filter:** switch using the `*_by_source` tables, stating that isolates with no type are left out.
+- **Pooled periods:** use `*_pooled` only when a single year has too little data, always labelled as pooled.
+- **Cluster watch:** from `cluster_watch`, defaulting to new clusters with an acquired last-resort gene. Say "seen in", never "spread from".
+- **Clinician evidence panel:** genes detected, sample counts, data age, gene and lab agreement, the antibiotic's WHO AWaRe group, and links to WHO guidance and local antibiograms. Antibiotics are sorted by name. No "use this" wording, no best-first order and no list of drugs that look effective. Repeat the not-for-clinical-use notice.
+- **GLASS beside our rates:** label it as lab-confirmed resistance in bloodstream infections, against genes in sequenced isolates. Credit WHO. Show GRAM's published global figures on the About page, credited, as someone else's estimates.
+- **Staph aureus trends:** show the analysis-method caveat (`results/method_check.json`).
 
 **Not building:** Sankey diagrams, 3D globes and gene spread networks. A network would suggest transmission routes the data cannot show.
 

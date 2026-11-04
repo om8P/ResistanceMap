@@ -88,7 +88,13 @@ These values live in `config/` and can be tuned.
 | **Provisional** | Latest year minus 3 and later (2023 on), for all organisms. This is a floor: only Salmonella reaches 90% uploaded, at 4 years |
 | **Rising** | Weighted slope above 0 and Cochran-Armitage z of at least 1.96, across the 10 years before the provisional period (2013 to 2022), with at least 5 years that meet the minimum sample. A second slope and flag cover 2013 to the latest year, labelled as including provisional years |
 | **First seen** | `first_year` is the raw earliest record. `established_year` is the first year with at least 3 isolates from at least 2 clusters, counted cumulatively. Lead with `established_year`, because raw dates include errors |
-| **Hotspot** | Lower confidence limit more than 10 points above the same organism, class and year in all other countries (both sides at least 30), or a rising class in that country. Comparing with other countries stops a dominant country being compared with itself |
+| **Hotspot** | Lower confidence limit more than 10 points above the same organism, class and year in all other countries (both sides at least 30), or a rising class in that country. Comparing with other countries stops a dominant country being compared with itself. `persistent` means high in this year and the calendar year before or after |
+| **Source view** | The same measures among isolates of one `epi_type` only. Isolates with no type are left out |
+| **Pooled period** | Fixed three-year periods anchored on the provisional start (2020 to 2022, 2023 to 2025, then 2026 alone). Clusters are recounted once per period. For display when one year is too small; trends keep using yearly rows |
+| **Both last-resort drugs** | `CARBAPENEM+COLISTIN`: both in the same isolate, for `acquired` and `any_excl_intrinsic`. In the adjusted view a cluster counts only if one isolate has both |
+| **Cluster watch** | Clusters with a record in the last 3 data years, seen in at least 2 countries overall. Describes the past and shows no routes |
+| **Lab result** | From `AST_phenotypes`, per isolate and antibiotic. R and NS are resistant, S is susceptible. ND, I and DD alone are not used, and mixed R and S results are left out |
+| **Gene and lab agreement** | Share lab-resistant among tested isolates with and without a gene. Evidence on how far a gene can be trusted, not a statement that a drug will work |
 | **Early warning** | `established_year` in the last 3 data years, with at least 3 isolates from at least 2 clusters inside those years. Point mutations excluded. `new_sequencing` marks rows with under 30 earlier isolates of that organism in that country (before the gene's first recent record), because every gene looks new where sequencing has just begun; the app hides these by default. `earlier_records` and `first_in_country_any_organism` show any older evidence |
 | **Last-resort drugs** | `subclass` contains `CARBAPENEM` or `COLISTIN`. Match on contains, not equals. `mechanism` is `acquired`, `mutation`, `disrupted`, `intrinsic` (OXA-51 family in Acinetobacter, from `product_name`) or `any_excl_intrinsic`, which is counted separately because one isolate can have several. Lead with `acquired`, but `disrupted` is a real mechanism (`oprD` loss in Pseudomonas) |
 | **Gene family** | Catalog `gene_family`, except `blaOXA`, which uses the finer `product_name` family (`blaOXA-48 family`) |
@@ -132,7 +138,13 @@ All in `results/`.
 | `early_warnings.parquet` | New appearances and evidence counts |
 | `last_resort.parquet`, `last_resort_adjusted.parquet` | Carbapenem and colistin rates by mechanism |
 | `gene_summary.parquet` | Per-gene totals and sources |
-| `sanity_checks.json` | Checks against published gene history |
+| `prevalence_pooled`, `last_resort_pooled`, each with `_adjusted` | Three-year periods, with `period_start` and `period_end` |
+| `prevalence_by_source`, `last_resort_by_source`, `rising_by_source`, each with `_adjusted` | Clinical and environmental views, with `epi_type` |
+| `cluster_watch.parquet` | Recent clusters seen in at least 2 countries |
+| `gene_lab_agreement.parquet` | Gene or family (`level`) against each antibiotic, with its AWaRe group |
+| `glass.parquet`, `glass_regions.parquet` | WHO GLASS bloodstream figures by country, and its own regional medians. Comparison only |
+| `method_check.json` | Analysis-method shares and within-year gaps |
+| `sanity_checks.json` | Checks against published gene history, and table reconciliation |
 | `timing.json` | Spark vs pandas on the same job |
 
 ## Validation
@@ -151,4 +163,7 @@ All in `results/`.
 - `blaKPC` with no subclass (749 rows) slightly undercounts carbapenem.
 - Clustered isolates are not independent, so z scores in the all-isolates view run high. Check the adjusted view.
 - Many country and year comparisons mean some hotspots will flag by chance.
+- Analysis method: within one year, methods differ by about 20 points for some Salmonella and E. coli classes, though their method mix is stable. Staph aureus shifted 34 points in method mix over 2013 to 2022, so its trends carry a caveat.
+- Lab results cover 24,803 isolates, more of them environmental than clinical, so they are not a random sample.
+- GLASS shows only countries meeting its reporting threshold (32 here, no USA), 2018 to 2023, and differs from our measure.
 - Not for clinical use.

@@ -9,7 +9,7 @@ import json
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 
-from analytics import ALL_ORGANISMS, RESULTS
+from analytics import ALL_ORGANISMS, BOTH_DRUGS, RESULTS, load_settings, pool_years, windows
 from clean import PARQUET
 
 OLD_RECORDS_SHOWN = 25
@@ -43,7 +43,8 @@ PUBLISHED = {
                    "E. coli in animals, meat and patients in China. Later retrospective work reports it in Chinese "
                    "chicken E. coli from the 1980s. Sources were read as summaries, not the original letter.",
         "sources": ["https://pesquisa.bvsalud.org/sms/resource/pt/mdl-26603172",
-                    "https://pmc.ncbi.nlm.nih.gov/articles/PMC5347679"],
+                    "https://pmc.ncbi.nlm.nih.gov/articles/PMC5347679",
+                    "https://doi.org/10.1016/S1473-3099(16)00061-X"],
         "assessment": "Broadly consistent. The earliest established year is 2004, in China. Records from before 2015 "
                       "are expected, because the gene circulated before it was described and later studies looked "
                       "back through stored isolates.",
@@ -53,8 +54,9 @@ PUBLISHED = {
             "confirmed. Unresolved.",
             "1984 (China, SAMN31881052) is the same record that also lists blaNDM-13, so its date is doubtful. It should "
             "not be read as support for the 1980s reports.",
-            "The source for the 1980s date was read in summary only, and summaries disagree slightly on the survey's "
-            "start, so the original letter should be checked before citing it in the report.",
+            "The 1980s date comes from Shen et al., Lancet Infect Dis 2016;16:293 (doi:10.1016/S1473-3099(16)00061-X). "
+            "Its full text could not be read, and summaries disagree slightly on the survey's start, so check the "
+            "letter before citing it in the report.",
         ],
     },
 }
@@ -110,9 +112,36 @@ def reconcile(spark, isolates):
             checks[f"{name}{suffix}_rows_positives_above_n"] = view.filter(F.col("positives") > F.col("n")).count()
             checks[f"{name}{suffix}_rows_rate_shown_under_minimum"] = view.filter(
                 F.col("rate").isNotNull() & ~F.col("meets_min_sample")).count()
+    checks.update(reconcile_additions(spark, usable))
+    bad = ("_coverage", "_above_n", "_minimum", "_differing", "_above_unfiltered", "_above_either_drug")
     checks["passed"] = (checks["isolates_in_table"] == checks["isolates_in_coverage"]
-                        and not any(v for k, v in checks.items() if k.endswith(("_coverage", "_above_n", "_minimum"))
-                                    and k != "isolates_in_coverage"))
+                        and not any(v for k, v in checks.items() if k.endswith(bad) and k != "isolates_in_coverage"))
+    return checks
+
+
+def reconcile_additions(spark, usable):
+    """Pooled totals must equal the yearly isolates, and filtered views can never exceed the full ones."""
+    checks = {}
+    keys = ["organism", "country", "year"]
+    bounds = windows(load_settings(), usable.agg(F.max("year")).first()[0])
+    periods = (pool_years(usable, bounds).groupBy("organism", "country", F.col("year").alias("period_end"))
+               .agg(F.sum("isolates").alias("isolates")))
+    for name in ["prevalence_pooled", "last_resort_pooled"]:
+        groups = spark.read.parquet(str(RESULTS / f"{name}.parquet")).select("organism", "country", "period_end", "n").distinct()
+        joined = periods.join(groups, ["organism", "country", "period_end"], "full")
+        checks[f"{name}_groups_differing"] = joined.filter(
+            F.col("n").isNull() | F.col("isolates").isNull() | (F.col("n") != F.col("isolates"))).count()
+    for suffix in ["", "_adjusted"]:
+        full = spark.read.parquet(str(RESULTS / f"prevalence{suffix}.parquet")).select(
+            keys + ["drug_class", F.col("n").alias("_n"), F.col("positives").alias("_p")])
+        source = spark.read.parquet(str(RESULTS / f"prevalence_by_source{suffix}.parquet"))
+        joined = source.join(full, keys + ["drug_class"], "left")
+        checks[f"prevalence_by_source{suffix}_rows_above_unfiltered"] = joined.filter(
+            F.col("_n").isNull() | (F.col("n") > F.col("_n")) | (F.col("positives") > F.col("_p"))).count()
+        last = spark.read.parquet(str(RESULTS / f"last_resort{suffix}.parquet")).filter(F.col("mechanism") == "acquired")
+        single = last.filter(F.col("drug") != BOTH_DRUGS).groupBy(keys).agg(F.min("positives").alias("_lowest"))
+        both = last.filter(F.col("drug") == BOTH_DRUGS).join(single, keys)
+        checks[f"last_resort{suffix}_dual_rows_above_either_drug"] = both.filter(F.col("positives") > F.col("_lowest")).count()
     return checks
 
 

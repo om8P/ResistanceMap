@@ -13,11 +13,13 @@ from pathlib import Path
 from pyspark.sql import SparkSession, Window
 from pyspark.sql import functions as F
 
-from clean import PARQUET, ROOT, SUMMARY
+from clean import PARQUET, ROOT, SUMMARY, read_organisms
 from profile_data import is_real
 
 SETTINGS = ROOT / "config" / "settings.json"
 RESULTS = ROOT / "results"
+DEV_RESULTS = ROOT / "data" / "dev_results"
+AWARE = ROOT / "config" / "aware.csv"
 Z_95 = 1.96
 ALL_ORGANISMS = "ALL"
 GROUP = ["organism", "organism_label", "country", "iso3", "year"]
@@ -25,6 +27,10 @@ PLACE = ["organism", "organism_label", "country", "iso3"]
 LAST_RESORT_DRUGS = ["CARBAPENEM", "COLISTIN"]
 MECHANISMS = ["acquired", "mutation", "disrupted", "intrinsic"]
 ANY_MECHANISM = "any_excl_intrinsic"
+BOTH_DRUGS = "CARBAPENEM+COLISTIN"
+SOURCES = ["clinical", "environmental/other"]
+RESISTANT_CALLS = ["R", "NS"]
+SUSCEPTIBLE_CALLS = ["S"]
 TOP_SOURCES = 5
 
 
@@ -223,28 +229,44 @@ def intrinsic_alleles(catalog, settings):
     return result.withColumn("_intrinsic", F.lit(True))
 
 
-def last_resort_rows(genes, intrinsic):
-    """One row per isolate, last-resort drug and mechanism, plus the any-mechanism rows."""
+def typed_last_resort(genes, intrinsic):
+    """One row per gene with a last-resort drug, labelled with its mechanism."""
     drugs = split_drugs(usable(add_units(genes)), "drug_subclass", "_token")
     carbapenem = F.col("_token").contains("CARBAPENEM")
     colistin = F.col("_token").contains("COLISTIN")
     named = (drugs.filter(carbapenem | colistin)
              .withColumn("drug", F.when(carbapenem, "CARBAPENEM").otherwise("COLISTIN"))
              .join(F.broadcast(intrinsic), ["organism", "gene"], "left"))
-    typed = named.withColumn(
+    return named.withColumn(
         "mechanism",
         F.when(F.col("_intrinsic").isNotNull(), "intrinsic")
         .when(F.col("match_source") == "disrupt", "disrupted")
         .when(F.col("gene_type") == "POINT", "mutation")
         .otherwise("acquired")).drop("_intrinsic", "_token")
-    any_row = typed.filter(F.col("mechanism") != "intrinsic").withColumn("mechanism", F.lit(ANY_MECHANISM))
-    return typed.unionByName(any_row)
+
+
+def both_drugs(rows, mechanism):
+    """Isolates with carbapenem and colistin genes in the same isolate, for one mechanism."""
+    counted = rows.groupBy(GROUP + ["biosample_acc", "unit"]).agg(F.countDistinct("drug").alias("_drugs"))
+    return (counted.filter(F.col("_drugs") == len(LAST_RESORT_DRUGS)).drop("_drugs")
+            .withColumn("drug", F.lit(BOTH_DRUGS)).withColumn("mechanism", F.lit(mechanism)))
+
+
+def last_resort_rows(genes, intrinsic):
+    """One row per isolate, drug and mechanism, plus any-mechanism and both-drug rows."""
+    columns = GROUP + ["biosample_acc", "unit", "drug", "mechanism"]
+    typed = typed_last_resort(genes, intrinsic).select(columns)
+    acquired = typed.filter(F.col("mechanism") == "acquired")
+    others = typed.filter(F.col("mechanism") != "intrinsic").withColumn("mechanism", F.lit(ANY_MECHANISM))
+    return (typed.unionByName(others).unionByName(both_drugs(acquired, "acquired").select(columns))
+            .unionByName(both_drugs(others, ANY_MECHANISM).select(columns)))
 
 
 def last_resort(isolates, genes, intrinsic, settings, bounds, adjusted=False):
     """Carbapenem and colistin rates by mechanism, with zeros for every combination."""
     spark = isolates.sparkSession
     combos = [(d, m) for d in LAST_RESORT_DRUGS for m in MECHANISMS + [ANY_MECHANISM]]
+    combos += [(BOTH_DRUGS, m) for m in ["acquired", ANY_MECHANISM]]
     targets = spark.createDataFrame(combos, ["drug", "mechanism"]).crossJoin(isolates.select("organism").distinct())
     table = rate_table(denominators(isolates, adjusted), last_resort_rows(genes, intrinsic), targets,
                        ["drug", "mechanism"], adjusted)
@@ -292,15 +314,20 @@ def gene_rates(isolates, genes, settings, bounds, adjusted):
 
 
 def rising(prevalence_rows, last_resort_table, gene_rows, settings, bounds):
-    """Trends for drug classes, last-resort drugs and genes, on two year windows."""
+    """Trends for drug classes, last-resort drugs and genes, on two year windows.
+
+    gene_rows can be None, for views that leave out gene-level trends.
+    """
     columns = GROUP + ["n", "positives", "kind", "value"]
     classes = (prevalence_rows.withColumn("kind", F.lit("drug_class")).withColumn("value", F.col("drug_class"))
                .select(columns))
     last = (last_resort_table.filter(F.col("mechanism").isin("acquired", ANY_MECHANISM))
             .withColumn("kind", F.lit("last_resort"))
             .withColumn("value", F.concat_ws(":", "drug", "mechanism")).select(columns))
-    gene = gene_rows.withColumn("kind", F.lit("gene")).withColumn("value", F.col("gene")).select(columns)
-    rows = classes.unionByName(last).unionByName(gene)
+    rows = classes.unionByName(last)
+    if gene_rows is not None:
+        gene = gene_rows.withColumn("kind", F.lit("gene")).withColumn("value", F.col("gene")).select(columns)
+        rows = rows.unionByName(gene)
     keys = PLACE + ["kind", "value"]
     complete = trend(rows, settings, bounds["rising_from"], bounds["rising_to"])
     extended = trend(rows, settings, bounds["rising_from"], bounds["latest_year"])
@@ -336,6 +363,11 @@ def hotspots(prevalence_rows, trends, settings, bounds):
                .withColumn("_rising", F.coalesce(F.col("_rising"), F.lit(False)))
                .withColumn("_high", F.coalesce(F.col("ci_low") > F.col("rest_rate") + margin, F.lit(False)))
                .withColumn("_last", F.max(in_window).over(latest)))
+    # Rows under the minimum sample are already gone, so a missing year breaks the run.
+    ordered = latest.orderBy("year")
+    before = F.coalesce(F.lag("_high").over(ordered) & (F.lag("year").over(ordered) == F.col("year") - 1), F.lit(False))
+    after = F.coalesce(F.lead("_high").over(ordered) & (F.lead("year").over(ordered) == F.col("year") + 1), F.lit(False))
+    flagged = flagged.withColumn("persistent", F.col("_high") & (before | after))
     return (flagged.filter(F.col("_high") | (F.col("_rising") & (F.col("year") == F.col("_last"))))
             .withColumn("reason", F.when(F.col("_high") & F.col("_rising"), "both")
                         .when(F.col("_high"), "high").otherwise("rising"))
@@ -372,9 +404,136 @@ def gene_summary(genes, isolates, seen):
     return result
 
 
-def write_table(frame, name):
+def source_view(isolates, genes, source):
+    """Keep one isolate type. Genes follow their isolates, and the denominator is that type only."""
+    chosen = isolates.filter(F.col("epi_type") == source)
+    return chosen, genes.join(chosen.select("biosample_acc", "organism"), ["biosample_acc", "organism"], "left_semi")
+
+
+def pool_years(frame, bounds):
+    """Replace year with the last year of its three-year period, anchored on the provisional start."""
+    anchor = bounds["provisional_from"]
+    start = F.lit(anchor) + 3 * F.floor((F.col("year") - anchor) / 3)
+    # F.least skips empty values, so an unknown year must stay empty rather than become the latest year.
+    period_end = F.least(start + 2, F.lit(bounds["latest_year"])).cast("int")
+    return frame.withColumn("year", F.when(F.col("year").isNotNull(), period_end))
+
+
+def period_columns(table, bounds):
+    """Rename the pooled year to period_end and add period_start."""
+    anchor = bounds["provisional_from"]
+    start = F.lit(anchor) + 3 * F.floor((F.col("year") - anchor) / 3)
+    return table.withColumn("period_start", start.cast("int")).withColumnRenamed("year", "period_end")
+
+
+def cluster_watch(isolates, genes, intrinsic, bounds):
+    """Clusters with recent records, seen in at least two countries. Says nothing about routes."""
+    start = bounds["early_warning_from"]
+    recent = F.col("year") >= start
+    keys = ["organism", "organism_label", "cluster_id"]
+    clusters = (usable(isolates).filter(F.col("cluster_id").isNotNull()).groupBy(keys)
+                .agg(F.min("year").alias("first_year"), F.max("year").alias("last_year"), F.count("*").alias("isolates"),
+                     F.sum(F.when(recent, 1).otherwise(0)).alias("recent_isolates"),
+                     F.array_join(F.array_sort(F.collect_set("country")), " | ").alias("countries"),
+                     F.countDistinct("country").alias("country_count"),
+                     F.countDistinct(F.when(recent, F.col("country"))).alias("recent_country_count")))
+    watched = clusters.filter((F.col("last_year") >= start) & (F.col("country_count") >= 2))
+    acquired = (typed_last_resort(genes.filter(F.col("cluster_id").isNotNull()), intrinsic)
+                .filter(F.col("mechanism") == "acquired").groupBy("organism", "cluster_id")
+                .agg(F.array_join(F.array_sort(F.collect_set("gene")), " | ").alias("last_resort_genes")))
+    return (watched.join(acquired, ["organism", "cluster_id"], "left")
+            .withColumn("acquired_last_resort", F.col("last_resort_genes").isNotNull())
+            .withColumn("new_since_window", F.col("first_year") >= start)
+            .withColumn("provisional", F.lit(True)))
+
+
+def drug_key(column):
+    """A name that matches across sources: lower case, with combination parts sorted."""
+    parts = F.split(F.regexp_replace(F.lower(F.trim(column)), r"[\s/+-]+", "+"), r"\+")
+    return F.array_join(F.array_sort(parts), "+")
+
+
+def lab_calls(ast):
+    """One result per isolate and antibiotic. Mixed R and S results are left out, not guessed.
+
+    Takes biosample_acc, organism and AST_phenotypes. Only R, NS and S are used. ND means not
+    determined, and I and DD are neither resistant nor susceptible.
+    """
+    entries = (ast.filter(F.col("AST_phenotypes").isNotNull())
+               .withColumn("_entry", F.explode(F.split(F.regexp_replace("AST_phenotypes", '"', ""), ",")))
+               .withColumn("antibiotic", F.lower(F.trim(F.regexp_extract("_entry", r"^(.*)=[^=]*$", 1))))
+               .withColumn("_call", F.trim(F.regexp_extract("_entry", r"=([^=]*)$", 1)))
+               .filter(F.col("antibiotic") != ""))
+    grouped = (entries.groupBy("biosample_acc", "organism", "antibiotic")
+               .agg(F.max(F.col("_call").isin(RESISTANT_CALLS)).alias("_r"),
+                    F.max(F.col("_call").isin(SUSCEPTIBLE_CALLS)).alias("_s")))
+    return grouped.filter(F.col("_r") != F.col("_s")).withColumn("resistant", F.col("_r")).drop("_r", "_s")
+
+
+def gene_lab_agreement(calls, genes, settings):
+    """How often isolates with and without a gene were lab-resistant to each antibiotic.
+
+    Evidence on how far a gene can be trusted, not a statement that any drug will work.
+    """
+    tested = calls.groupBy("organism", "antibiotic").agg(
+        F.count("*").alias("tested"), F.sum(F.col("resistant").cast("int")).alias("tested_resistant"))
+    results = []
+    for level in ["gene", "family"]:
+        carriers = genes.select("biosample_acc", "organism", F.col(level).alias("name")).distinct()
+        counted = (carriers.join(calls, ["biosample_acc", "organism"]).groupBy("organism", "name", "antibiotic")
+                   .agg(F.count("*").alias("with_gene"), F.sum(F.col("resistant").cast("int")).alias("with_gene_resistant")))
+        results.append(counted.withColumn("level", F.lit(level)))
+    rows = results[0].unionByName(results[1]).join(tested, ["organism", "antibiotic"])
+    rows = (rows.withColumn("without_gene", F.col("tested") - F.col("with_gene"))
+            .withColumn("without_gene_resistant", F.col("tested_resistant") - F.col("with_gene_resistant"))
+            .withColumnRenamed("name", "gene"))
+    for prefix in ["with_gene", "without_gene"]:
+        low, high = wilson_limits(f"{prefix}_resistant", prefix)
+        enough = F.col(prefix) >= settings["min_sample"]
+        rows = (rows.withColumn(f"{prefix}_rate", F.when(enough, F.col(f"{prefix}_resistant") / F.col(prefix)))
+                .withColumn(f"{prefix}_ci_low", F.when(enough, low)).withColumn(f"{prefix}_ci_high", F.when(enough, high)))
+    return rows
+
+
+def add_aware(table, aware):
+    """Attach the WHO AWaRe group. Antibiotics not on the list, such as veterinary ones, stay empty."""
+    keyed = aware.select(F.col("key").alias("_key"), F.col("category").alias("aware_category"), F.col("name").alias("who_name"))
+    return table.withColumn("_key", drug_key(F.col("antibiotic"))).join(F.broadcast(keyed), "_key", "left").drop("_key")
+
+
+def lab_coverage(calls, isolates):
+    """Which isolates have lab results, because they are not a random sample."""
+    tested = calls.select("biosample_acc", "organism").distinct().join(isolates, ["biosample_acc", "organism"])
+    result = {"isolates_with_results": tested.count(), "antibiotic_results": calls.count()}
+    for name, column in [("by_organism", "organism"), ("by_source", "epi_type")]:
+        result[name] = {str(r[column]): r["count"] for r in tested.groupBy(column).count().collect()}
+    top = tested.groupBy("country").count().orderBy(F.desc("count")).limit(5).collect()
+    result["top_countries"] = {str(r["country"]): r["count"] for r in top}
+    return result
+
+
+def read_lab_results(spark, organism):
+    """Read lab results from each organism's source table, keeping only the needed columns."""
+    frames = []
+    for row in read_organisms():
+        if organism and row["organism"] != organism:
+            continue
+        table = spark.read.parquet(str(PARQUET / "amr" / row["organism"]))
+        frames.append(table.select("biosample_acc", "AST_phenotypes").withColumn("organism", F.lit(row["organism"])))
+    result = frames[0]
+    for frame in frames[1:]:
+        result = result.unionByName(frame)
+    return result.filter(~F.upper(F.trim(F.col("AST_phenotypes"))).isin("NULL", "", "MISSING"))
+
+
+def output_dir(organism):
+    """A single-organism run must not replace the full results."""
+    return DEV_RESULTS if organism else RESULTS
+
+
+def write_table(frame, name, folder=RESULTS):
     """Write one Parquet part in a folder pandas can open, and return its row count."""
-    path = RESULTS / f"{name}.parquet"
+    path = folder / f"{name}.parquet"
     frame.coalesce(1).write.mode("overwrite").parquet(str(path))
     for extra in Path(path).glob(".*.crc"):
         extra.unlink()
@@ -404,26 +563,59 @@ def main():
     intrinsic = intrinsic_alleles(catalog, settings)
     counts = {}
 
-    counts["coverage"] = write_table(coverage(isolates, bounds), "coverage")
-    cover = spark.read.parquet(str(RESULTS / "coverage.parquet"))
+    out = output_dir(args.organism)
+
+    def save(frame, name):
+        counts[name] = write_table(frame, name, out)
+        return spark.read.parquet(str(out / f"{name}.parquet"))
+
+    cover = save(coverage(isolates, bounds), "coverage")
+    pooled_isolates, pooled_genes = pool_years(isolates, bounds), pool_years(genes, bounds)
     for adjusted, suffix in [(False, ""), (True, "_adjusted")]:
-        counts[f"prevalence{suffix}"] = write_table(prevalence(isolates, genes, settings, bounds, adjusted), f"prevalence{suffix}")
-        counts[f"last_resort{suffix}"] = write_table(last_resort(isolates, genes, intrinsic, settings, bounds, adjusted), f"last_resort{suffix}")
-        rates = spark.read.parquet(str(RESULTS / f"prevalence{suffix}.parquet"))
-        last = spark.read.parquet(str(RESULTS / f"last_resort{suffix}.parquet"))
+        rates = save(prevalence(isolates, genes, settings, bounds, adjusted), f"prevalence{suffix}")
+        last = save(last_resort(isolates, genes, intrinsic, settings, bounds, adjusted), f"last_resort{suffix}")
         gene = gene_rates(isolates, genes, settings, bounds, adjusted)
-        counts[f"rising{suffix}"] = write_table(rising(rates, last, gene, settings, bounds), f"rising{suffix}")
-        trends = spark.read.parquet(str(RESULTS / f"rising{suffix}.parquet"))
-        counts[f"hotspots{suffix}"] = write_table(hotspots(rates, trends, settings, bounds), f"hotspots{suffix}")
+        trends = save(rising(rates, last, gene, settings, bounds), f"rising{suffix}")
+        save(hotspots(rates, trends, settings, bounds), f"hotspots{suffix}")
+
+        pooled_rates = prevalence(pooled_isolates, pooled_genes, settings, bounds, adjusted)
+        pooled_last = last_resort(pooled_isolates, pooled_genes, intrinsic, settings, bounds, adjusted)
+        save(period_columns(pooled_rates, bounds), f"prevalence_pooled{suffix}")
+        save(period_columns(pooled_last, bounds), f"last_resort_pooled{suffix}")
+
+        by_source = {"prevalence": [], "last_resort": [], "rising": []}
+        for source in SOURCES:
+            chosen, chosen_genes = source_view(isolates, genes, source)
+            source_rates = prevalence(chosen, chosen_genes, settings, bounds, adjusted)
+            source_last = last_resort(chosen, chosen_genes, intrinsic, settings, bounds, adjusted)
+            source_trends = rising(source_rates, source_last, None, settings, bounds)
+            for name, frame in [("prevalence", source_rates), ("last_resort", source_last), ("rising", source_trends)]:
+                by_source[name].append(frame.withColumn("epi_type", F.lit(source)))
+        for name, frames in by_source.items():
+            save(frames[0].unionByName(frames[1]), f"{name}_by_source{suffix}")
 
     yearly = yearly_gene_counts(genes).cache()
-    counts["first_seen"] = write_table(first_seen(yearly, settings), "first_seen")
-    seen = spark.read.parquet(str(RESULTS / "first_seen.parquet"))
-    counts["early_warnings"] = write_table(early_warnings(yearly, seen, cover, settings, bounds), "early_warnings")
-    counts["gene_summary"] = write_table(gene_summary(genes, isolates, seen), "gene_summary")
+    seen = save(first_seen(yearly, settings), "first_seen")
+    save(early_warnings(yearly, seen, cover, settings, bounds), "early_warnings")
+    save(gene_summary(genes, isolates, seen), "gene_summary")
+    save(cluster_watch(isolates, genes, intrinsic, bounds), "cluster_watch")
+
+    kept = isolates.select("biosample_acc", "organism")
+    lab = read_lab_results(spark, args.organism).join(kept, ["biosample_acc", "organism"], "left_semi")
+    calls = lab_calls(lab).cache()
+    agreement = gene_lab_agreement(calls, genes, settings)
+    if AWARE.exists():
+        agreement = add_aware(agreement, spark.read.csv(str(AWARE), header=True))
+    save(agreement, "gene_lab_agreement")
+
     if not args.organism:
         summary = json.loads(SUMMARY.read_text())
-        summary["analytics"] = {"rows": counts, "years": bounds}
+        summary["analytics"] = {
+            "rows": counts,
+            "years": bounds,
+            "isolates_without_epi_type": isolates.filter(F.col("epi_type").isNull()).count(),
+            "lab_results": lab_coverage(calls, isolates),
+        }
         SUMMARY.write_text(json.dumps(summary, indent=2, ensure_ascii=False))
     spark.stop()
 

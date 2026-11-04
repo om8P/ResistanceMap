@@ -133,7 +133,8 @@
         "history": "First described by Liu et al. (Lancet Infect Dis 2016;16:161-168, online November 2015), from E. coli in animals, meat and patients in China. Later retrospective work reports it in Chinese chicken E. coli from the 1980s. Sources were read as summaries, not the original letter.",
         "sources": [
           "https://pesquisa.bvsalud.org/sms/resource/pt/mdl-26603172",
-          "https://pmc.ncbi.nlm.nih.gov/articles/PMC5347679"
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC5347679",
+          "https://doi.org/10.1016/S1473-3099(16)00061-X"
         ]
       },
       "in_data": {
@@ -156,7 +157,7 @@
       "oddities": [
         "1975 (China, SAMN07983309, chicken) is earlier than the 1980s usually cited. The accession sits near other Chinese chicken records (SAMN079832xx), so it may come from a retrospective survey, but the date is not confirmed. Unresolved.",
         "1984 (China, SAMN31881052) is the same record that also lists blaNDM-13, so its date is doubtful. It should not be read as support for the 1980s reports.",
-        "The source for the 1980s date was read in summary only, and summaries disagree slightly on the survey's start, so the original letter should be checked before citing it in the report."
+        "The 1980s date comes from Shen et al., Lancet Infect Dis 2016;16:293 (doi:10.1016/S1473-3099(16)00061-X). Its full text could not be read, and summaries disagree slightly on the survey's start, so check the letter before citing it in the report."
       ],
       "records_before_published_year": 1451,
       "records_before_retrospective_start": 1,
@@ -439,6 +440,12 @@
     "last_resort_rows_rate_shown_under_minimum": 0,
     "last_resort_adjusted_rows_positives_above_n": 0,
     "last_resort_adjusted_rows_rate_shown_under_minimum": 0,
+    "prevalence_pooled_groups_differing": 0,
+    "last_resort_pooled_groups_differing": 0,
+    "prevalence_by_source_rows_above_unfiltered": 0,
+    "last_resort_dual_rows_above_either_drug": 0,
+    "prevalence_by_source_adjusted_rows_above_unfiltered": 0,
+    "last_resort_adjusted_dual_rows_above_either_drug": 0,
     "passed": true
   }
 }

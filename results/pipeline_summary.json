@@ -392,16 +392,28 @@
     "rows": {
       "coverage": 10137,
       "prevalence": 205076,
-      "last_resort": 94700,
-      "rising": 27552,
+      "last_resort": 113640,
+      "rising": 28396,
       "hotspots": 7408,
+      "prevalence_pooled": 100304,
+      "last_resort_pooled": 55680,
+      "prevalence_by_source": 218100,
+      "last_resort_by_source": 123252,
+      "rising_by_source": 13605,
       "prevalence_adjusted": 205076,
-      "last_resort_adjusted": 94700,
-      "rising_adjusted": 19934,
+      "last_resort_adjusted": 113640,
+      "rising_adjusted": 20558,
       "hotspots_adjusted": 4517,
+      "prevalence_pooled_adjusted": 100304,
+      "last_resort_pooled_adjusted": 55680,
+      "prevalence_by_source_adjusted": 218100,
+      "last_resort_by_source_adjusted": 123252,
+      "rising_by_source_adjusted": 9820,
       "first_seen": 267489,
       "early_warnings": 1393,
-      "gene_summary": 20528
+      "gene_summary": 20528,
+      "cluster_watch": 7135,
+      "gene_lab_agreement": 85304
     },
     "years": {
       "latest_year": 2026,
@@ -409,6 +421,31 @@
       "early_warning_from": 2024,
       "rising_from": 2013,
       "rising_to": 2022
+    },
+    "isolates_without_epi_type": 310780,
+    "lab_results": {
+      "isolates_with_results": 24803,
+      "antibiotic_results": 342590,
+      "by_organism": {
+        "Salmonella": 9934,
+        "Pseudomonas_aeruginosa": 968,
+        "Acinetobacter": 1234,
+        "Klebsiella": 2410,
+        "Escherichia_coli_Shigella": 8734,
+        "Staphylococcus_aureus": 1523
+      },
+      "by_source": {
+        "clinical": 9973,
+        "environmental/other": 14771,
+        "None": 59
+      },
+      "top_countries": {
+        "USA": 18637,
+        "Canada": 1379,
+        "None": 859,
+        "Australia": 593,
+        "Netherlands": 508
+      }
     }
   }
 }

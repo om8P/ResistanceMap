@@ -1,0 +1,11 @@
+glass_pathogen,glass_antibiotic,organism,our_table,our_value,match_note
+Acinetobacter spp.,Imipenem,Acinetobacter,last_resort,CARBAPENEM,
+Acinetobacter spp.,Meropenem,Acinetobacter,last_resort,CARBAPENEM,
+Acinetobacter spp.,Colistin,Acinetobacter,last_resort,COLISTIN,
+Escherichia coli,Imipenem,Escherichia_coli_Shigella,last_resort,CARBAPENEM,Our group also includes Shigella
+Escherichia coli,Meropenem,Escherichia_coli_Shigella,last_resort,CARBAPENEM,Our group also includes Shigella
+Escherichia coli,Colistin,Escherichia_coli_Shigella,last_resort,COLISTIN,Our group also includes Shigella
+Klebsiella pneumoniae,Imipenem,Klebsiella,last_resort,CARBAPENEM,Our group covers all Klebsiella
+Klebsiella pneumoniae,Meropenem,Klebsiella,last_resort,CARBAPENEM,Our group covers all Klebsiella
+Klebsiella pneumoniae,Colistin,Klebsiella,last_resort,COLISTIN,Our group covers all Klebsiella
+Salmonella spp.,Ciprofloxacin,Salmonella,prevalence,QUINOLONE,GLASS tests one drug and our class covers all quinolones

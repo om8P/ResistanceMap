@@ -4,9 +4,9 @@ Keep this file under about 60 lines. Replace old status instead of adding a log.
 
 ## Status
 - **Last updated:** 2026-11-04
-- **Done:** Sessions 1 to 3. 124 tests pass. All are committed.
-- **Session 3 results:** 12 prepared tables in `results/`, 9.2 MB. Table totals reconcile with the 1,991,177 isolates (`results/sanity_checks.json`).
-- **Next:** Session 4. Start Docker only if the pipeline must re-run; the app reads `results/`.
+- **Done:** Sessions 1 to 3 and the Session 3 additions. 149 tests pass in the container, plus 5 for `src/aware.py` run on the host. All are committed. Work is on branch `session-3`; `master` does not have Session 3.
+- **Results:** tables in `results/`, 20 MB. Reconciliation passes (`results/sanity_checks.json`).
+- **Next:** Session 4 (its plan now includes the additions). The app reads `results/`, so Docker is only needed to re-run the pipeline.
 
 ## Sessions
 - [x] 1. Setup and data audit
@@ -29,13 +29,16 @@ MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit -
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/profile_data.py
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/clean.py
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/genes.py
-MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/analytics.py   # add --organism NAME for one, but that overwrites results/
+MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/analytics.py   # add --organism NAME for one, which writes to data/dev_results/
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/sanity_checks.py
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pip install -q --user --default-timeout=120 pytest pandas pyarrow   # again if the container is recreated
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 src/timing.py
+MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/method_check.py
+python src/aware.py   # host, needs data/raw/aware/B09489-eng.xlsx
+python src/glass.py   # host, needs data/raw/glass/
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pytest tests -q -p no:cacheprovider   # over 5 minutes, run in the background
 ```
-Timing, all six: ingest 398 s, profile 247 s, clean 191 s, genes 264 s, analytics 597 s, sanity 98 s, timing job 304 s.
+Timing, all six: ingest 398 s, profile 247 s, clean 191 s, genes 264 s, analytics 1,918 s, sanity about 100 s, timing job 304 s.
 
 ## Data findings
 From `results/data_profile.json`. Percent with real values, placeholders such as `missing` excluded. "Upload" is the percent uploaded within 5 years of collection.
@@ -77,12 +80,26 @@ Measured, among sequenced isolates, genotypic resistance.
 - **Klebsiella, India, acquired carbapenem genes:** 3,409 isolates. Not rising on 2013 to 2022: slope 0.06 points a year, z 0.08, 8 usable years. With provisional years: slope 0.64, not significant. Adjusted: slope -0.87, z -0.92.
 - **Spark against pandas (`timing.json`):** same job on 11,274,636 rows, 3 runs each in the 5 GB container. Median job 28.7 s for Spark and 52.1 s for pandas; whole process 42.1 s and 57.4 s. Peak memory about 3.9 GB and 4.97 GB, so pandas ran right at the limit. Answers identical on all 85,404 rows, an independent check of the Spark numbers. Pandas was written plainly, not tuned, so a tuned version could do better.
 
+## Additions, measured
+Among sequenced isolates, genotypic resistance, unless labelled GLASS.
+- **Persistent hotspots:** 4,432 of 7,408 rows, and 2,662 of 4,517 adjusted. Still many, so the app needs filters.
+- **Pooling:** 1,727 of 4,640 periods reach the minimum (37%), against 2,848 of 9,470 single years (30%). Modest, not a cure.
+- **Both last-resort drugs, acquired:** 1,165 isolates: E. coli/Shigella 950, Klebsiella 209, Acinetobacter 3, Salmonella 3, none in Pseudomonas or Staph aureus. Any mechanism: 17,105, mostly chromosomal changes, so lead with acquired.
+- **Clinical view, Klebsiella in India, acquired carbapenem genes:** slope 1.44 points a year, z 1.91, not significant at 1.96. Close, so do not state it as a firm "no rise".
+- **Cluster watch:** 7,135 clusters. 3,154 in 2 or more countries within the last 3 years. 650 new, 1,388 with an acquired last-resort gene, 96 both.
+- **Gene and lab agreement:** 24,803 isolates with usable results (clinical 9,973, environmental 14,771), 85,304 rows, 14,865 with a rate. Example, Klebsiella and meropenem: with `blaNDM` family 217 of 222 resistant, without 510 of 1,141. AWaRe labels miss veterinary drugs, antifungals, and fosfomycin and minocycline, where WHO's routes differ.
+- **GLASS:** 32 countries, 2018 to 2023, bloodstream, no USA, 1,182 rows (1,114 meet the minimum). India, K. pneumoniae and meropenem, 2023: 5,405 of 8,610 resistant. Our acquired carbapenem genes for Klebsiella in India, 2023: 576 of 960. These are different measures. Regional medians are partial (see Known issues).
+- **Analysis method (`method_check.json`):** Staph aureus `COMBINED` share fell from 72.1% (2013) to 38.0% (2022), with gaps of about 11 points in aminoglycosides and macrolides, so its trends are most at risk. Very roughly 3.8 points over the decade. Salmonella and E. coli gaps reach about 20 points, but their mix moved under 2 points. No trends were changed; the proposal is a caveat on Staph aureus trends.
+- **`blaKPC`:** stays uncounted. 96 of its 301 catalog rows list cephalosporin, not carbapenem, so it fails the rule that every allele must list carbapenem.
+
 ## Changes to the plan
 - Session 2: gene lookup rules are in `ARCHITECTURE.md`. Earliest valid year raised to 1910, because 1900 to 1909 dates are artefacts.
-- Added after the core: pathogen search and import (`PLAN.md`). This changes two fixed decisions: the six-organism limit, and the app needing only prepared files, which now applies to browsing but not import. Nothing built yet.
-- Added to Sessions 3 to 5: richer visuals with chart rules, and `coverage.parquet` (`PLAN.md`). Coverage is built; visuals are not.
-- Session 3 definitions, now in `ARCHITECTURE.md`: provisional from 2023; two trend windows; `established_year`; `new_sequencing` baseline; hotspots compared with other countries, 10-point margin; last-resort mechanisms; adjusted versions of last_resort, rising and hotspots.
-- Added files: `config/settings.json`, `src/sanity_checks.py`, `src/timing.py`. pandas and pyarrow in the container, for the timing only.
+- Session 3 definitions and additions are in `ARCHITECTURE.md`. Added `config/settings.json`, `config/aware.csv`, `config/glass_map.csv`, and pandas and pyarrow in the container.
+- Changed fixed decisions: GLASS and AWaRe as comparison and labelling sources; doctors as possible readers. The user asked for treatment suggestions; drugs are named with evidence, but recommending one stays out because the data cannot show a drug will work. Not-for-clinical-use stays.
+- Pathogen search and import remain planned after the core. Nothing built.
 
 ## Known issues
 - One profile run reported 36,007 s (about 10 hours). The re-run took 247 s. Cause unknown, so do not use that figure.
+- GLASS has no bulk resistance file. The files came from its chart download, with the page setting filters. Regional medians: African Region 5 of 10; Eastern Mediterranean Region 4 of 10; European Region 8 of 10; Global 10 of 10; South-East Asia Region 6 of 10; Region of the Americas and Western Pacific Region missing. African Region has no colistin option. Country rows are complete for the 10 pairs.
+- The pooled tables and AWaRe labels were rebuilt after fixes without a full re-run, using the same functions. A full run should give the same tables.
+- The `mcr-1` 1980s paper (Shen et al. 2016) was read in summary only. Check it before citing.
