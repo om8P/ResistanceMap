@@ -85,12 +85,17 @@ These values live in `config/` and can be tuned.
 | **Confidence** | Wilson 95% interval |
 | **Minimum sample** | Hide percentages when fewer than 30 isolates are in the group |
 | **Outbreak-adjusted** | Count each `PDS_acc` once per organism, country and year. Isolates with no cluster count individually |
-| **Rising** | Positive trend across recent years, using only years that meet the minimum sample |
-| **Hotspot** | Lower confidence limit above the organism's overall rate for that drug class and year |
-| **Early warning** | Gene first seen in a country in the last 3 data years, with at least 3 isolates from at least 2 clusters |
-| **Last-resort drugs** | `subclass` contains `CARBAPENEM` or `COLISTIN`. Match on contains, not equals |
+| **Provisional** | Latest year minus 3 and later (2023 on), for all organisms. This is a floor: only Salmonella reaches 90% uploaded, at 4 years |
+| **Rising** | Weighted slope above 0 and Cochran-Armitage z of at least 1.96, across the 10 years before the provisional period (2013 to 2022), with at least 5 years that meet the minimum sample. A second slope and flag cover 2013 to the latest year, labelled as including provisional years |
+| **First seen** | `first_year` is the raw earliest record. `established_year` is the first year with at least 3 isolates from at least 2 clusters, counted cumulatively. Lead with `established_year`, because raw dates include errors |
+| **Hotspot** | Lower confidence limit more than 10 points above the same organism, class and year in all other countries (both sides at least 30), or a rising class in that country. Comparing with other countries stops a dominant country being compared with itself |
+| **Early warning** | `established_year` in the last 3 data years, with at least 3 isolates from at least 2 clusters inside those years. Point mutations excluded. `new_sequencing` marks rows with under 30 earlier isolates of that organism in that country (before the gene's first recent record), because every gene looks new where sequencing has just begun; the app hides these by default. `earlier_records` and `first_in_country_any_organism` show any older evidence |
+| **Last-resort drugs** | `subclass` contains `CARBAPENEM` or `COLISTIN`. Match on contains, not equals. `mechanism` is `acquired`, `mutation`, `disrupted`, `intrinsic` (OXA-51 family in Acinetobacter, from `product_name`) or `any_excl_intrinsic`, which is counted separately because one isolate can have several. Lead with `acquired`, but `disrupted` is a real mechanism (`oprD` loss in Pseudomonas) |
+| **Gene family** | Catalog `gene_family`, except `blaOXA`, which uses the finer `product_name` family (`blaOXA-48 family`) |
 
 Recent years are incomplete, because samples are uploaded long after collection. Mark the latest years as provisional.
+
+Under the minimum sample, tables keep `n` and `positives` but leave `rate` and limits empty, so the app cannot show them by accident. Rates are fractions from 0 to 1. Thresholds are in `config/settings.json`.
 
 ## Features
 | Feature | Question it answers | Table used |
@@ -121,11 +126,11 @@ All in `results/`.
 | `pipeline_summary.json` | Rows kept, flagged and dropped; catalog match rate |
 | `prevalence.parquet`, `prevalence_adjusted.parquet` | Rate, counts and confidence limits |
 | `coverage.parquet` | Isolates by organism, country and year |
-| `first_seen.parquet` | Gene, country and first year |
-| `rising.parquet` | Trend per gene or drug class and country |
-| `hotspots.parquet` | Flagged groups |
+| `first_seen.parquet` | Gene or family (`level`), country, first and established years, per organism and `ALL` |
+| `rising.parquet`, `rising_adjusted.parquet` | Trend per drug class, last-resort drug or gene, and country |
+| `hotspots.parquet`, `hotspots_adjusted.parquet` | Flagged groups, with reason `high`, `rising` or `both` |
 | `early_warnings.parquet` | New appearances and evidence counts |
-| `last_resort.parquet` | Carbapenem and colistin trends |
+| `last_resort.parquet`, `last_resort_adjusted.parquet` | Carbapenem and colistin rates by mechanism |
 | `gene_summary.parquet` | Per-gene totals and sources |
 | `sanity_checks.json` | Checks against published gene history |
 | `timing.json` | Spark vs pandas on the same job |
@@ -140,6 +145,10 @@ All in `results/`.
 - Data reflects what labs chose to sequence, and it is heavily weighted towards some countries.
 - Upload delays make the latest years incomplete.
 - Having a gene does not prove a drug will fail.
-- Location is mostly country-level.
+- Location is mostly country-level, and 40 to 55% of real dates are year only, so results stay yearly. `China: Hong Kong` counts as China and plain `Hong Kong` separately; the effect is not measured.
 - About 1.8 GB of source data is modest, so one laptop may be enough for it. Report the measured Spark timing honestly.
+- Intrinsic genes (`fosA`, `blaSHV` in Klebsiella) put some class rates near 100%, so those classes cannot flag as hotspots.
+- `blaKPC` with no subclass (749 rows) slightly undercounts carbapenem.
+- Clustered isolates are not independent, so z scores in the all-isolates view run high. Check the adjusted view.
+- Many country and year comparisons mean some hotspots will flag by chance.
 - Not for clinical use.

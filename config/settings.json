@@ -1,0 +1,16 @@
+{
+  "min_sample": 30,
+  "provisional_years": 4,
+  "early_warning_years": 3,
+  "support_isolates": 3,
+  "support_clusters": 2,
+  "baseline_isolates": 30,
+  "hotspot_margin_points": 10,
+  "rising_years": 10,
+  "rising_min_years": 5,
+  "rising_min_gene_positives": 10,
+  "rising_z": 1.96,
+  "intrinsic": [
+    {"organism": "Acinetobacter", "product_prefix": "OXA-51 family"}
+  ]
+}

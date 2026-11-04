@@ -387,5 +387,28 @@
         }
       }
     }
+  },
+  "analytics": {
+    "rows": {
+      "coverage": 10137,
+      "prevalence": 205076,
+      "last_resort": 94700,
+      "rising": 27552,
+      "hotspots": 7408,
+      "prevalence_adjusted": 205076,
+      "last_resort_adjusted": 94700,
+      "rising_adjusted": 19934,
+      "hotspots_adjusted": 4517,
+      "first_seen": 267489,
+      "early_warnings": 1393,
+      "gene_summary": 20528
+    },
+    "years": {
+      "latest_year": 2026,
+      "provisional_from": 2023,
+      "early_warning_from": 2024,
+      "rising_from": 2013,
+      "rising_to": 2022
+    }
   }
 }

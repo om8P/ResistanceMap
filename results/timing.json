@@ -1,0 +1,81 @@
+{
+  "job": "Distinct isolates per organism, country, year and drug class, over the full isolate_genes table",
+  "gene_rows": 11274636,
+  "setup": {
+    "container_memory_limit_gb": 5,
+    "spark_driver_memory": "4g",
+    "spark_mode": "local[*]",
+    "cpus": 16,
+    "python": "3.10.12",
+    "pandas": "2.3.3"
+  },
+  "measure": "job_seconds excludes process start-up and writing the answer. total_seconds covers the whole process. Peak memory is resident memory, sampled every 0.2 s. Each engine ran in a fresh process.",
+  "engines": {
+    "spark": {
+      "runs": [
+        {
+          "run": 1,
+          "exit_code": 0,
+          "total_seconds": 42.1,
+          "peak_memory_gb": 3.79,
+          "job_seconds": 28.7
+        },
+        {
+          "run": 2,
+          "exit_code": 0,
+          "total_seconds": 45.5,
+          "peak_memory_gb": 3.88,
+          "job_seconds": 31.2
+        },
+        {
+          "run": 3,
+          "exit_code": 0,
+          "total_seconds": 42.0,
+          "peak_memory_gb": 3.7,
+          "job_seconds": 28.5
+        }
+      ],
+      "completed": 3,
+      "median_job_seconds": 28.7,
+      "median_total_seconds": 42.1,
+      "max_peak_memory_gb": 3.88
+    },
+    "pandas": {
+      "runs": [
+        {
+          "run": 1,
+          "exit_code": 0,
+          "total_seconds": 57.6,
+          "peak_memory_gb": 4.92,
+          "job_seconds": 53.4
+        },
+        {
+          "run": 2,
+          "exit_code": 0,
+          "total_seconds": 57.4,
+          "peak_memory_gb": 4.93,
+          "job_seconds": 52.1
+        },
+        {
+          "run": 3,
+          "exit_code": 0,
+          "total_seconds": 56.6,
+          "peak_memory_gb": 4.97,
+          "job_seconds": 51.6
+        }
+      ],
+      "completed": 3,
+      "median_job_seconds": 52.1,
+      "median_total_seconds": 57.4,
+      "max_peak_memory_gb": 4.97
+    }
+  },
+  "answers": {
+    "compared": true,
+    "spark_rows": 85404,
+    "pandas_rows": 85404,
+    "rows_only_in_spark": 0,
+    "rows_only_in_pandas": 0,
+    "identical": true
+  }
+}

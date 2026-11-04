@@ -1,0 +1,444 @@
+{
+  "genes": {
+    "blaNDM": {
+      "published": {
+        "published_year": 2008,
+        "history": "First described by Yong et al. (Antimicrob Agents Chemother, December 2009), from a Klebsiella pneumoniae isolate found in 2008 in a Swedish patient who had been treated in New Delhi, India.",
+        "sources": [
+          "https://en.wikipedia.org/wiki/New_Delhi_metallo-beta-lactamase_1",
+          "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3204651/"
+        ]
+      },
+      "in_data": {
+        "countries_on_record": 123,
+        "countries_established": 105,
+        "earliest_record": {
+          "year": 1943,
+          "countries": [
+            "Slovakia"
+          ]
+        },
+        "earliest_established": {
+          "year": 2009,
+          "countries": [
+            "India"
+          ]
+        }
+      },
+      "assessment": "Broadly consistent. With the support rule the earliest established year is 2009, in India, which fits the published 2008 discovery and link to India.",
+      "oddities": [
+        "1943 and 1968 (Slovakia, SAMEA116823128 and SAMEA117931159) predate any report of the gene by decades. Treated as date errors in the source metadata, not checked with the submitters.",
+        "1984 (China, SAMN31881052) carries both blaNDM-13 and mcr-1.1 in a human urine sample. Likely a date error.",
+        "The 2005 records have no country and are labelled as lab passages or transformants, so they do not come from patients and do not affect any country's first-seen year.",
+        "2007 (Germany, SAMN03366525, Acinetobacter) could be a real isolate from before the discovery. Not verified.",
+        "The first_year column still shows these raw dates, so the app must lead with established_year."
+      ],
+      "records_before_published_year": 8,
+      "records_before_retrospective_start": 8,
+      "oldest_records": [
+        {
+          "biosample_acc": "SAMEA116823128",
+          "gene": "blaNDM-1",
+          "organism": "Klebsiella",
+          "country": "Slovakia",
+          "year": 1943,
+          "collection_date": "1943-10-09",
+          "host": "Homo sapiens",
+          "isolation_source": "rectal swab"
+        },
+        {
+          "biosample_acc": "SAMEA117931159",
+          "gene": "blaNDM-1",
+          "organism": "Klebsiella",
+          "country": "Slovakia",
+          "year": 1968,
+          "collection_date": "1968-04-12",
+          "host": "Homo sapiens",
+          "isolation_source": "wound swab"
+        },
+        {
+          "biosample_acc": "SAMN31881052",
+          "gene": "blaNDM-13",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "China",
+          "year": 1984,
+          "collection_date": "1984-10-14",
+          "host": "Homo sapiens",
+          "isolation_source": "urine"
+        },
+        {
+          "biosample_acc": "SAMN31980370",
+          "gene": "blaNDM-1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": null,
+          "year": 2005,
+          "collection_date": "2005",
+          "host": null,
+          "isolation_source": "500th passage of C600T strain containing plasmid IncX3; without antibiotics"
+        },
+        {
+          "biosample_acc": "SAMN31986860",
+          "gene": "blaNDM-1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": null,
+          "year": 2005,
+          "collection_date": "2005",
+          "host": null,
+          "isolation_source": "J53 transformant with plasmid IncX3"
+        },
+        {
+          "biosample_acc": "SAMN31987477",
+          "gene": "blaNDM-1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": null,
+          "year": 2005,
+          "collection_date": "2005",
+          "host": null,
+          "isolation_source": "500th passage of C600T strain containing plasmid IncX3; with 2 g/L imipenem"
+        },
+        {
+          "biosample_acc": "SAMN31987564",
+          "gene": "blaNDM-1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": null,
+          "year": 2005,
+          "collection_date": "2005",
+          "host": null,
+          "isolation_source": "C600 transformat with plasmid IncX3"
+        },
+        {
+          "biosample_acc": "SAMN03366525",
+          "gene": "blaNDM-1",
+          "organism": "Acinetobacter",
+          "country": "Germany",
+          "year": 2007,
+          "collection_date": "2007",
+          "host": "Homo sapiens",
+          "isolation_source": "respiratory tract"
+        }
+      ],
+      "isolates_by_year_around_publication": {
+        "2005": 4,
+        "2007": 1,
+        "2008": 6,
+        "2009": 18,
+        "2010": 55,
+        "2011": 57
+      }
+    },
+    "mcr-1": {
+      "published": {
+        "published_year": 2015,
+        "retrospective_from": 1980,
+        "history": "First described by Liu et al. (Lancet Infect Dis 2016;16:161-168, online November 2015), from E. coli in animals, meat and patients in China. Later retrospective work reports it in Chinese chicken E. coli from the 1980s. Sources were read as summaries, not the original letter.",
+        "sources": [
+          "https://pesquisa.bvsalud.org/sms/resource/pt/mdl-26603172",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC5347679"
+        ]
+      },
+      "in_data": {
+        "countries_on_record": 84,
+        "countries_established": 68,
+        "earliest_record": {
+          "year": 1975,
+          "countries": [
+            "China"
+          ]
+        },
+        "earliest_established": {
+          "year": 2004,
+          "countries": [
+            "China"
+          ]
+        }
+      },
+      "assessment": "Broadly consistent. The earliest established year is 2004, in China. Records from before 2015 are expected, because the gene circulated before it was described and later studies looked back through stored isolates.",
+      "oddities": [
+        "1975 (China, SAMN07983309, chicken) is earlier than the 1980s usually cited. The accession sits near other Chinese chicken records (SAMN079832xx), so it may come from a retrospective survey, but the date is not confirmed. Unresolved.",
+        "1984 (China, SAMN31881052) is the same record that also lists blaNDM-13, so its date is doubtful. It should not be read as support for the 1980s reports.",
+        "The source for the 1980s date was read in summary only, and summaries disagree slightly on the survey's start, so the original letter should be checked before citing it in the report."
+      ],
+      "records_before_published_year": 1451,
+      "records_before_retrospective_start": 1,
+      "oldest_records": [
+        {
+          "biosample_acc": "SAMN07983309",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "China",
+          "year": 1975,
+          "collection_date": "1975",
+          "host": "chicken",
+          "isolation_source": null
+        },
+        {
+          "biosample_acc": "SAMN31881052",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "China",
+          "year": 1984,
+          "collection_date": "1984-10-14",
+          "host": "Homo sapiens",
+          "isolation_source": "urine"
+        },
+        {
+          "biosample_acc": "SAMN43566841",
+          "gene": "mcr-1.1",
+          "organism": "Salmonella",
+          "country": "Pakistan",
+          "year": 2003,
+          "collection_date": "2003-09-01",
+          "host": null,
+          "isolation_source": "Environment"
+        },
+        {
+          "biosample_acc": "SAMN07983266",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "China",
+          "year": 2004,
+          "collection_date": "2004",
+          "host": "chicken",
+          "isolation_source": null
+        },
+        {
+          "biosample_acc": "SAMN08238410",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "China",
+          "year": 2004,
+          "collection_date": "2004",
+          "host": "chicken",
+          "isolation_source": null
+        },
+        {
+          "biosample_acc": "SAMN08386750",
+          "gene": "mcr-1.1",
+          "organism": "Salmonella",
+          "country": null,
+          "year": 2005,
+          "collection_date": "2005",
+          "host": null,
+          "isolation_source": "sausage"
+        },
+        {
+          "biosample_acc": "SAMN12730712",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2005,
+          "collection_date": "2005",
+          "host": null,
+          "isolation_source": "pig stool"
+        },
+        {
+          "biosample_acc": "SAMN12730713",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2005,
+          "collection_date": "2005",
+          "host": null,
+          "isolation_source": "pig stool"
+        },
+        {
+          "biosample_acc": "SAMN12730714",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2005,
+          "collection_date": "2005",
+          "host": null,
+          "isolation_source": "pig stool"
+        },
+        {
+          "biosample_acc": "SAMN33422833",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "United Arab Emirates",
+          "year": 2005,
+          "collection_date": "2005-05",
+          "host": null,
+          "isolation_source": "rectal swab, Cat"
+        },
+        {
+          "biosample_acc": "SAMN33422834",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "United Arab Emirates",
+          "year": 2005,
+          "collection_date": "2005-05",
+          "host": null,
+          "isolation_source": "rectal swab, Dog"
+        },
+        {
+          "biosample_acc": "SAMN07983250",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "China",
+          "year": 2006,
+          "collection_date": "2006",
+          "host": "chicken",
+          "isolation_source": null
+        },
+        {
+          "biosample_acc": "SAMN11523835",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2006,
+          "collection_date": "2006",
+          "host": "Sus scrofa domesticus",
+          "isolation_source": "stool"
+        },
+        {
+          "biosample_acc": "SAMN11936815",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2006,
+          "collection_date": "2006",
+          "host": "Sus scrofa domesticus",
+          "isolation_source": "stool"
+        },
+        {
+          "biosample_acc": "SAMN12730715",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2006,
+          "collection_date": "2006",
+          "host": null,
+          "isolation_source": "pig stool"
+        },
+        {
+          "biosample_acc": "SAMEA12943892",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "France",
+          "year": 2007,
+          "collection_date": "2007",
+          "host": "Bos taurus",
+          "isolation_source": "cattle"
+        },
+        {
+          "biosample_acc": "SAMEA5618988",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "France",
+          "year": 2007,
+          "collection_date": "2007-03-05",
+          "host": "Bovinae",
+          "isolation_source": "Diarrhea"
+        },
+        {
+          "biosample_acc": "SAMN08522730",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "France",
+          "year": 2007,
+          "collection_date": "2007-05-03",
+          "host": "Bos taurus",
+          "isolation_source": "Bovine adult"
+        },
+        {
+          "biosample_acc": "SAMN08660891",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "South Korea",
+          "year": 2007,
+          "collection_date": "2007-02-09",
+          "host": null,
+          "isolation_source": "chicken"
+        },
+        {
+          "biosample_acc": "SAMN09372509",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Mexico",
+          "year": 2007,
+          "collection_date": "2007-11-27",
+          "host": "Homo sapiens",
+          "isolation_source": "feces"
+        },
+        {
+          "biosample_acc": "SAMN11523837",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2007,
+          "collection_date": "2007",
+          "host": "Sus scrofa domesticus",
+          "isolation_source": "stool"
+        },
+        {
+          "biosample_acc": "SAMN11523862",
+          "gene": "mcr-1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2007,
+          "collection_date": "2007",
+          "host": "Sus scrofa domesticus",
+          "isolation_source": "stool"
+        },
+        {
+          "biosample_acc": "SAMN12730716",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2007,
+          "collection_date": "2007",
+          "host": null,
+          "isolation_source": "pig stool"
+        },
+        {
+          "biosample_acc": "SAMN12730717",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2007,
+          "collection_date": "2007",
+          "host": null,
+          "isolation_source": "pig stool"
+        },
+        {
+          "biosample_acc": "SAMN12730718",
+          "gene": "mcr-1.1",
+          "organism": "Escherichia_coli_Shigella",
+          "country": "Spain",
+          "year": 2007,
+          "collection_date": "2007",
+          "host": null,
+          "isolation_source": "pig stool"
+        }
+      ],
+      "isolates_by_year_around_publication": {
+        "2009": 52,
+        "2010": 80,
+        "2011": 172,
+        "2012": 337,
+        "2013": 280,
+        "2014": 454,
+        "2015": 770,
+        "2016": 1884,
+        "2017": 1512,
+        "2018": 1318
+      }
+    }
+  },
+  "reconciliation": {
+    "isolates_in_table": 1991177,
+    "isolates_in_coverage": 1991177,
+    "prevalence_groups_differing_from_coverage": 0,
+    "prevalence_rows_positives_above_n": 0,
+    "prevalence_rows_rate_shown_under_minimum": 0,
+    "prevalence_adjusted_rows_positives_above_n": 0,
+    "prevalence_adjusted_rows_rate_shown_under_minimum": 0,
+    "last_resort_groups_differing_from_coverage": 0,
+    "last_resort_rows_positives_above_n": 0,
+    "last_resort_rows_rate_shown_under_minimum": 0,
+    "last_resort_adjusted_rows_positives_above_n": 0,
+    "last_resort_adjusted_rows_rate_shown_under_minimum": 0,
+    "passed": true
+  }
+}
