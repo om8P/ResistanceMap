@@ -11,6 +11,14 @@
   "rising_min_gene_positives": 10,
   "rising_z": 1.96,
   "intrinsic": [
-    {"organism": "Acinetobacter", "product_prefix": "OXA-51 family"}
-  ]
+    {
+      "organism": "Acinetobacter",
+      "product_prefix": "OXA-51 family"
+    }
+  ],
+  "confidence_stronger_points": 10,
+  "confidence_moderate_points": 25,
+  "near_universal_rate": 0.95,
+  "sparse_label_pct": 50,
+  "sparse_hide_pct": 10
 }
