@@ -16,57 +16,57 @@
         {
           "run": 1,
           "exit_code": 0,
-          "total_seconds": 42.1,
-          "peak_memory_gb": 3.79,
-          "job_seconds": 28.7
+          "total_seconds": 16.7,
+          "peak_memory_gb": 3.93,
+          "job_seconds": 11.5
         },
         {
           "run": 2,
           "exit_code": 0,
-          "total_seconds": 45.5,
-          "peak_memory_gb": 3.88,
-          "job_seconds": 31.2
+          "total_seconds": 16.2,
+          "peak_memory_gb": 3.65,
+          "job_seconds": 11.2
         },
         {
           "run": 3,
           "exit_code": 0,
-          "total_seconds": 42.0,
-          "peak_memory_gb": 3.7,
-          "job_seconds": 28.5
+          "total_seconds": 16.3,
+          "peak_memory_gb": 3.6,
+          "job_seconds": 10.9
         }
       ],
       "completed": 3,
-      "median_job_seconds": 28.7,
-      "median_total_seconds": 42.1,
-      "max_peak_memory_gb": 3.88
+      "median_job_seconds": 11.2,
+      "median_total_seconds": 16.3,
+      "max_peak_memory_gb": 3.93
     },
     "pandas": {
       "runs": [
         {
           "run": 1,
           "exit_code": 0,
-          "total_seconds": 57.6,
+          "total_seconds": 20.5,
           "peak_memory_gb": 4.92,
-          "job_seconds": 53.4
+          "job_seconds": 19.0
         },
         {
           "run": 2,
           "exit_code": 0,
-          "total_seconds": 57.4,
-          "peak_memory_gb": 4.93,
-          "job_seconds": 52.1
+          "total_seconds": 19.9,
+          "peak_memory_gb": 4.92,
+          "job_seconds": 17.9
         },
         {
           "run": 3,
           "exit_code": 0,
-          "total_seconds": 56.6,
+          "total_seconds": 21.1,
           "peak_memory_gb": 4.97,
-          "job_seconds": 51.6
+          "job_seconds": 18.7
         }
       ],
       "completed": 3,
-      "median_job_seconds": 52.1,
-      "median_total_seconds": 57.4,
+      "median_job_seconds": 18.7,
+      "median_total_seconds": 20.5,
       "max_peak_memory_gb": 4.97
     }
   },

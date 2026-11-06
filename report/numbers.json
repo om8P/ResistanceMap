@@ -1,0 +1,307 @@
+{
+  "rows_in": {
+    "Pseudomonas_aeruginosa": 67170,
+    "Salmonella": 908677,
+    "Escherichia_coli_Shigella": 592815,
+    "Klebsiella": 178938,
+    "Staphylococcus_aureus": 179096,
+    "Acinetobacter": 64856
+  },
+  "rows_in_total": 1991552,
+  "isolates_kept": 1991177,
+  "gene_rows": 11274636,
+  "catalog_match_pct": 99.878,
+  "result_files": 32,
+  "table_rows": {
+    "coverage": 10137,
+    "prevalence": 205076,
+    "last_resort": 113640,
+    "rising": 28396,
+    "hotspots": 7408,
+    "prevalence_pooled": 100304,
+    "last_resort_pooled": 55680,
+    "prevalence_by_source": 218100,
+    "last_resort_by_source": 123252,
+    "rising_by_source": 13605,
+    "prevalence_adjusted": 205076,
+    "last_resort_adjusted": 113640,
+    "rising_adjusted": 20558,
+    "hotspots_adjusted": 4517,
+    "prevalence_pooled_adjusted": 100304,
+    "last_resort_pooled_adjusted": 55680,
+    "prevalence_by_source_adjusted": 218100,
+    "last_resort_by_source_adjusted": 123252,
+    "rising_by_source_adjusted": 9820,
+    "first_seen": 267489,
+    "early_warnings": 1393,
+    "gene_summary": 20528,
+    "cluster_watch": 7135,
+    "gene_lab_agreement": 85304
+  },
+  "years": {
+    "latest_year": 2026,
+    "provisional_from": 2023,
+    "early_warning_from": 2024,
+    "rising_from": 2013,
+    "rising_to": 2022
+  },
+  "lab_results": {
+    "isolates_with_results": 24803,
+    "antibiotic_results": 342590,
+    "by_source": {
+      "clinical": 9973,
+      "environmental/other": 14771,
+      "None": 59
+    }
+  },
+  "profile": {
+    "Pseudomonas_aeruginosa": {
+      "rows": 67170,
+      "date_pct": 80.42,
+      "geo_pct": 86.46,
+      "uploaded_5y_pct": 63.81
+    },
+    "Salmonella": {
+      "rows": 908677,
+      "date_pct": 91.56,
+      "geo_pct": 93.41,
+      "uploaded_5y_pct": 94.09
+    },
+    "Escherichia_coli_Shigella": {
+      "rows": 592815,
+      "date_pct": 82.84,
+      "geo_pct": 86.96,
+      "uploaded_5y_pct": 82.12
+    },
+    "Klebsiella": {
+      "rows": 178938,
+      "date_pct": 83.05,
+      "geo_pct": 89.64,
+      "uploaded_5y_pct": 70.77
+    },
+    "Staphylococcus_aureus": {
+      "rows": 179096,
+      "date_pct": 77.43,
+      "geo_pct": 79.91,
+      "uploaded_5y_pct": 68.93
+    },
+    "Acinetobacter": {
+      "rows": 64856,
+      "date_pct": 89.94,
+      "geo_pct": 91.89,
+      "uploaded_5y_pct": 78.01
+    }
+  },
+  "reconciliation_isolates": [
+    1991177,
+    1991177
+  ],
+  "reconciliation_nonzero": {},
+  "reconciliation_passed": true,
+  "sanity_genes": {
+    "blaNDM": {
+      "countries_on_record": 123,
+      "countries_established": 105,
+      "earliest_record": {
+        "year": 1943,
+        "countries": [
+          "Slovakia"
+        ]
+      },
+      "earliest_established": {
+        "year": 2009,
+        "countries": [
+          "India"
+        ]
+      }
+    },
+    "mcr-1": {
+      "countries_on_record": 84,
+      "countries_established": 68,
+      "earliest_record": {
+        "year": 1975,
+        "countries": [
+          "China"
+        ]
+      },
+      "earliest_established": {
+        "year": 2004,
+        "countries": [
+          "China"
+        ]
+      }
+    }
+  },
+  "method_staph": {
+    "first_year": 2013,
+    "last_year": 2022,
+    "share_first_year": {
+      "COMBINED": 0.721,
+      "NUCLEOTIDE": 0.279
+    },
+    "share_last_year": {
+      "COMBINED": 0.38,
+      "NUCLEOTIDE": 0.62
+    },
+    "largest_change_points": 34.1
+  },
+  "early_warnings": 1393,
+  "early_warnings_new_sequencing": 561,
+  "early_warnings_shown_by_default": 832,
+  "hotspots": 7408,
+  "hotspots_adjusted": 4517,
+  "hotspots_persistent": 4432,
+  "hotspots_adjusted_persistent": 2662,
+  "clusters": 7135,
+  "clusters_recent_multi_country": 3154,
+  "clusters_new": 650,
+  "clusters_acquired_last_resort": 1388,
+  "both_last_resort_acquired_by_organism": {
+    "Acinetobacter": 3,
+    "E. coli/Shigella": 950,
+    "Klebsiella": 209,
+    "Pseudomonas aeruginosa": 0,
+    "Salmonella": 3,
+    "Staph aureus": 0
+  },
+  "both_last_resort_acquired_total": 1165,
+  "pooled_periods": 4640,
+  "pooled_periods_min_sample": 1727,
+  "glass_india_kpn_meropenem_2023": {
+    "tested": 8610,
+    "resistant": 5405
+  },
+  "glass_meets_min": 1114,
+  "glass_countries": 32,
+  "glass_rows": 1182,
+  "glass_years": [
+    2018,
+    2023
+  ],
+  "coverage": {
+    "isolates": 1991177,
+    "isolates_with_country_and_year": 1674864,
+    "usa_share_pct_of_all": 44.53,
+    "india_share_pct_of_all": 0.6,
+    "india_by_organism": {
+      "Acinetobacter": 1494,
+      "Escherichia_coli_Shigella": 4097,
+      "Klebsiella": 3409,
+      "Pseudomonas_aeruginosa": 813,
+      "Salmonella": 1657,
+      "Staphylococcus_aureus": 469
+    },
+    "india_total": 11939,
+    "top_countries": {
+      "USA": 842189,
+      "United Kingdom": 222925,
+      "China": 113918,
+      "Australia": 57248,
+      "Canada": 44736
+    },
+    "groups": 9470,
+    "groups_min_sample": 2848
+  },
+  "klebsiella_india": {
+    "last_resort": {
+      "years_shown": [
+        2014,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "2023": {
+        "n": 960,
+        "positives": 576
+      }
+    },
+    "last_resort_adjusted": {
+      "years_shown": [
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "2023": {
+        "n": 373,
+        "positives": 185
+      }
+    },
+    "rising": {
+      "years_used": 8.0,
+      "n": 1610.0,
+      "positives": 918.0,
+      "slope_points_per_year": 0.06,
+      "z": 0.08,
+      "slope_points_per_year_with_provisional": 0.64,
+      "z_with_provisional": 1.55,
+      "rising": false
+    },
+    "rising_adjusted": {
+      "years_used": 7.0,
+      "n": 916.0,
+      "positives": 414.0,
+      "slope_points_per_year": -0.87,
+      "z": -0.92,
+      "slope_points_per_year_with_provisional": 1.13,
+      "z_with_provisional": 1.94,
+      "rising": false
+    },
+    "rising_clinical": {
+      "slope_points_per_year": 1.44,
+      "z": 1.91,
+      "rising": false,
+      "years_used": 7,
+      "n": 1321,
+      "positives": 861
+    }
+  },
+  "spread": {
+    "blaNDM": {
+      "countries_on_record": 123,
+      "countries_established": 105,
+      "earliest_established": 2009,
+      "earliest_established_countries": [
+        "India"
+      ]
+    },
+    "mcr-1": {
+      "countries_on_record": 84,
+      "countries_established": 68,
+      "earliest_established": 2004,
+      "earliest_established_countries": [
+        "China"
+      ]
+    }
+  },
+  "timing": {
+    "gene_rows": 11274636,
+    "identical": true,
+    "rows": 85404,
+    "spark_median_job_seconds": 11.2,
+    "spark_median_total_seconds": 16.3,
+    "spark_max_peak_memory_gb": 3.93,
+    "pandas_median_job_seconds": 18.7,
+    "pandas_median_total_seconds": 20.5,
+    "pandas_max_peak_memory_gb": 4.97
+  },
+  "agreement_klebsiella_meropenem_blaNDM": {
+    "with_gene": 222,
+    "with_gene_resistant": 217,
+    "without_gene": 1141,
+    "without_gene_resistant": 510
+  }
+}
