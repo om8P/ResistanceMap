@@ -19,6 +19,8 @@ PROFILE = ROOT / "results" / "data_profile.json"
 
 FILL_COLUMNS = ["collection_date", "geo_loc_name", "host", "isolation_source", "epi_type", "lat_lon",
                 "AST_phenotypes", "AMR_genotypes_core"]
+# Fields for pathogen search, kept apart from FILL_COLUMNS so the app's fill summaries do not change.
+SEARCH_COLUMNS = ["scientific_name", "serovar", "strain", "host_disease", "taxid", "species_taxid"]
 # Values can carry a reason after a colon, such as "missing: third party data".
 PLACEHOLDER = (r"^(missing|not[ _]collected|not[ _]applicable|not[ _]provided|not[ _]available|not[ _]determined"
                r"|unknown|unspecified|n/?a|none|null|restricted access|-|\.)(\s*:.*)?$")
@@ -59,16 +61,16 @@ def top_values(frame, condition, column, limit=10):
     return {str(row[column]): row["count"] for row in rows}
 
 
-def fill_rates(frame, total):
+def fill_rates(frame, total, columns=FILL_COLUMNS, distinct=False):
     """Percent real, placeholder and empty for each column the features rely on."""
     exprs = []
-    for column in FILL_COLUMNS:
+    for column in columns:
         exprs.append(F.sum(F.when(is_real(column), 1).otherwise(0)).alias(f"{column}|real"))
         exprs.append(F.sum(F.when(is_placeholder(column), 1).otherwise(0)).alias(f"{column}|placeholder"))
     counts = frame.agg(*exprs).first().asDict()
 
     rates = {}
-    for column in FILL_COLUMNS:
+    for column in columns:
         real, placeholder = counts[f"{column}|real"], counts[f"{column}|placeholder"]
         rates[column] = {
             "pct_filled": percent(real, total),
@@ -76,6 +78,8 @@ def fill_rates(frame, total):
             "pct_empty": percent(total - real - placeholder, total),
             "top_placeholders": top_values(frame, is_placeholder(column), column, 5),
         }
+        if distinct:
+            rates[column]["distinct_real"] = frame.filter(is_real(column)).select(normal(column)).distinct().count()
     return rates
 
 
@@ -208,6 +212,7 @@ def profile_organism(spark, organism, record):
         "rows": total,
         "distinct_biosample_acc": frame.select("biosample_acc").distinct().count(),
         "fill": fill_rates(frame, total),
+        "search_fill": fill_rates(frame, total, SEARCH_COLUMNS, distinct=True),
         "dates": date_profile(frame),
         "upload_delay": upload_delay(frame),
         "countries": country_profile(frame, total),

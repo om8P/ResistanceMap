@@ -75,6 +75,56 @@
           "top_placeholders": {}
         }
       },
+      "search_fill": {
+        "scientific_name": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 267
+        },
+        "serovar": {
+          "pct_filled": 0.17,
+          "pct_placeholder": 0.02,
+          "pct_empty": 99.81,
+          "top_placeholders": {
+            "not available: to be reported later": 15,
+            "not collected": 1
+          },
+          "distinct_real": 26
+        },
+        "strain": {
+          "pct_filled": 62.23,
+          "pct_placeholder": 0.0,
+          "pct_empty": 37.77,
+          "top_placeholders": {},
+          "distinct_real": 38583
+        },
+        "host_disease": {
+          "pct_filled": 19.2,
+          "pct_placeholder": 16.07,
+          "pct_empty": 64.73,
+          "top_placeholders": {
+            "not collected": 10312,
+            "not provided": 483
+          },
+          "distinct_real": 726
+        },
+        "taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 267
+        },
+        "species_taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 2
+        }
+      },
       "dates": {
         "formats": {
           "YYYY-MM-DD": 21429,
@@ -325,6 +375,60 @@
           "pct_placeholder": 0.0,
           "pct_empty": 62.49,
           "top_placeholders": {}
+        }
+      },
+      "search_fill": {
+        "scientific_name": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 2744
+        },
+        "serovar": {
+          "pct_filled": 59.08,
+          "pct_placeholder": 0.01,
+          "pct_empty": 40.91,
+          "top_placeholders": {
+            "-:r:1,5": 60,
+            "-:z4,z24:-": 5,
+            "-:g,m,s:-": 4,
+            "-:i:1,2": 2,
+            "-:a:1,5": 1
+          },
+          "distinct_real": 3389
+        },
+        "strain": {
+          "pct_filled": 93.1,
+          "pct_placeholder": 0.0,
+          "pct_empty": 6.9,
+          "top_placeholders": {},
+          "distinct_real": 834946
+        },
+        "host_disease": {
+          "pct_filled": 4.31,
+          "pct_placeholder": 3.86,
+          "pct_empty": 91.82,
+          "top_placeholders": {
+            "not provided": 20462,
+            "not collected": 14651,
+            "none": 3
+          },
+          "distinct_real": 602
+        },
+        "taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 2744
+        },
+        "species_taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 2
         }
       },
       "dates": {
@@ -621,6 +725,64 @@
           "top_placeholders": {}
         }
       },
+      "search_fill": {
+        "scientific_name": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 3285
+        },
+        "serovar": {
+          "pct_filled": 18.32,
+          "pct_placeholder": 0.1,
+          "pct_empty": 81.58,
+          "top_placeholders": {
+            "not provided": 587,
+            "not available: to be reported later": 31,
+            "-:H48": 2,
+            "-:H19": 1,
+            "not collected": 1
+          },
+          "distinct_real": 3136
+        },
+        "strain": {
+          "pct_filled": 70.03,
+          "pct_placeholder": 0.01,
+          "pct_empty": 29.96,
+          "top_placeholders": {
+            "restricted access": 51,
+            "Unknown:H39 / fimH1288 / 7966 (ST Warwick) / F": 1,
+            "Unknown:H6 / ND / 747 (ST Warwick) / F": 1
+          },
+          "distinct_real": 392397
+        },
+        "host_disease": {
+          "pct_filled": 9.7,
+          "pct_placeholder": 2.82,
+          "pct_empty": 87.48,
+          "top_placeholders": {
+            "not collected": 11267,
+            "not provided": 5435,
+            "restricted access": 38
+          },
+          "distinct_real": 2073
+        },
+        "taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 3285
+        },
+        "species_taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 175
+        }
+      },
       "dates": {
         "formats": {
           "timestamp": 257,
@@ -913,6 +1075,59 @@
           "top_placeholders": {}
         }
       },
+      "search_fill": {
+        "scientific_name": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 378
+        },
+        "serovar": {
+          "pct_filled": 0.58,
+          "pct_placeholder": 0.01,
+          "pct_empty": 99.41,
+          "top_placeholders": {
+            "not available: to be reported later": 11,
+            "not provided": 8,
+            "not collected": 2,
+            "missing: lab stock": 1
+          },
+          "distinct_real": 320
+        },
+        "strain": {
+          "pct_filled": 61.99,
+          "pct_placeholder": 0.0,
+          "pct_empty": 38.01,
+          "top_placeholders": {},
+          "distinct_real": 97423
+        },
+        "host_disease": {
+          "pct_filled": 18.28,
+          "pct_placeholder": 6.84,
+          "pct_empty": 74.87,
+          "top_placeholders": {
+            "not collected": 11283,
+            "not provided": 910,
+            "restricted access": 53
+          },
+          "distinct_real": 1828
+        },
+        "taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 378
+        },
+        "species_taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 4
+        }
+      },
       "dates": {
         "formats": {
           "YYYY-MM-DD": 67638,
@@ -1149,6 +1364,58 @@
           "pct_placeholder": 0.0,
           "pct_empty": 2.56,
           "top_placeholders": {}
+        }
+      },
+      "search_fill": {
+        "scientific_name": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 4325
+        },
+        "serovar": {
+          "pct_filled": 1.97,
+          "pct_placeholder": 0.18,
+          "pct_empty": 97.86,
+          "top_placeholders": {
+            "not provided": 186,
+            "not available: to be reported later": 100,
+            "not collected": 29,
+            "-": 1
+          },
+          "distinct_real": 190
+        },
+        "strain": {
+          "pct_filled": 53.84,
+          "pct_placeholder": 0.0,
+          "pct_empty": 46.16,
+          "top_placeholders": {},
+          "distinct_real": 84538
+        },
+        "host_disease": {
+          "pct_filled": 26.25,
+          "pct_placeholder": 8.22,
+          "pct_empty": 65.53,
+          "top_placeholders": {
+            "not collected": 14722,
+            "not provided": 3
+          },
+          "distinct_real": 811
+        },
+        "taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 4325
+        },
+        "species_taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 3
         }
       },
       "dates": {
@@ -1426,6 +1693,57 @@
           "pct_placeholder": 0.0,
           "pct_empty": 0.0,
           "top_placeholders": {}
+        }
+      },
+      "search_fill": {
+        "scientific_name": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 815
+        },
+        "serovar": {
+          "pct_filled": 0.01,
+          "pct_placeholder": 0.02,
+          "pct_empty": 99.96,
+          "top_placeholders": {
+            "not available: to be reported later": 10,
+            "not collected": 4,
+            "not provided": 1
+          },
+          "distinct_real": 3
+        },
+        "strain": {
+          "pct_filled": 61.24,
+          "pct_placeholder": 0.0,
+          "pct_empty": 38.76,
+          "top_placeholders": {},
+          "distinct_real": 37786
+        },
+        "host_disease": {
+          "pct_filled": 19.18,
+          "pct_placeholder": 8.75,
+          "pct_empty": 72.07,
+          "top_placeholders": {
+            "not collected": 4740,
+            "not provided": 936
+          },
+          "distinct_real": 674
+        },
+        "taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 815
+        },
+        "species_taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 81
         }
       },
       "dates": {

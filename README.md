@@ -10,6 +10,7 @@ It is a BDSMA mini project, built under the course's "SpatioTemporal Data Analyt
 - **Map and trends:** resistance by country and year, with Wilson 95% intervals, sample counts and a "rising" test.
 - **Early warnings:** genes newly established in a country, with the evidence behind each.
 - **Last-resort drugs:** carbapenem and colistin resistance by mechanism.
+- **Search:** is a pathogen, serovar, strain, NCBI taxonomy ID or disease covered, and how good is the data? A disease lists possible pathogens, not a diagnosis.
 - **Gene profile, cluster watch, country report, compare countries, guided questions and an evidence panel** that shows how often a gene matches lab results.
 - Every view has an **outbreak-adjusted** option, which counts each genetic cluster once, and a confidence label.
 
@@ -47,7 +48,7 @@ Run from the project folder. In Git Bash on Windows, keep `MSYS_NO_PATHCONV=1`, 
    ```bash
    python src/download.py
    ```
-   WHO files are downloaded by hand: the AWaRe list (`B09489-eng.xlsx`) into `data/raw/aware/`, and the GLASS chart downloads into `data/raw/glass/`.
+   `python src/download.py --list` only refreshes `config/ncbi_organisms.csv`, the organism groups NCBI tracks, which search uses. WHO files are downloaded by hand: the AWaRe list (`B09489-eng.xlsx`) into `data/raw/aware/`, and the GLASS chart downloads into `data/raw/glass/`.
 3. Run the Spark steps in order (20 to 50 minutes in all, depending on the machine).
    ```bash
    MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/ingest.py
@@ -56,6 +57,7 @@ Run from the project folder. In Git Bash on Windows, keep `MSYS_NO_PATHCONV=1`, 
    MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/genes.py
    MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --master "local[8]" --driver-memory 4g src/analytics.py
    MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/sanity_checks.py
+   MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/search_index.py
    ```
 4. Run the checks (about 10 minutes).
    ```bash
@@ -76,7 +78,7 @@ To try the pipeline on one small organism first, add `--organism Pseudomonas_aer
 
 ## Tests
 ```bash
-python -m pytest tests/test_app_rules.py tests/test_app_pages.py tests/test_aware.py -q -p no:cacheprovider
+python -m pytest tests/test_app_rules.py tests/test_app_pages.py tests/test_aware.py tests/test_search.py -q -p no:cacheprovider
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pytest tests -q -p no:cacheprovider
 ```
 The first runs on the host in about a minute. The second runs every test in the container and takes about 3 to 5 minutes.

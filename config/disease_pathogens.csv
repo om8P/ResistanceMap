@@ -1,0 +1,62 @@
+disease,synonyms,organism,note,source
+Typhoid and paratyphoid fever,typhoid;enteric fever;paratyphoid,Salmonella,Serovars Typhi and Paratyphi,WHO fact sheet: Typhoid
+Salmonellosis,non-typhoidal salmonella;salmonella infection;food poisoning,Salmonella,Non-typhoidal serovars,WHO fact sheet: Salmonella (non-typhoidal)
+Shigellosis,shigella infection;bacillary dysentery;dysentery,Escherichia_coli_Shigella,Shigella is grouped with E. coli in NCBI,CDC: Shigella
+Diarrhoeal disease,diarrhoea;diarrhea;gastroenteritis,Escherichia_coli_Shigella,One of several bacterial causes; many cases are viral,WHO fact sheet: Diarrhoeal disease
+Diarrhoeal disease,diarrhoea;diarrhea;gastroenteritis,Salmonella,One of several bacterial causes; many cases are viral,WHO fact sheet: Diarrhoeal disease
+Diarrhoeal disease,diarrhoea;diarrhea;gastroenteritis,Campylobacter,One of several bacterial causes; many cases are viral,WHO fact sheet: Diarrhoeal disease
+Diarrhoeal disease,diarrhoea;diarrhea;gastroenteritis,Vibrio_cholerae,One of several bacterial causes; many cases are viral,WHO fact sheet: Diarrhoeal disease
+Cholera,,Vibrio_cholerae,,WHO fact sheet: Cholera
+Campylobacteriosis,campylobacter infection,Campylobacter,,WHO fact sheet: Campylobacter
+Haemolytic uraemic syndrome,hus;hemolytic uremic syndrome;stec infection,Escherichia_coli_Shigella,Shiga toxin-producing E. coli,WHO fact sheet: E. coli
+Urinary tract infection,uti;cystitis;pyelonephritis;kidney infection,Escherichia_coli_Shigella,,CDC: Urinary tract infection basics
+Urinary tract infection,uti;cystitis;pyelonephritis;kidney infection,Klebsiella,,CDC: Urinary tract infection basics
+Urinary tract infection,uti;cystitis;pyelonephritis;kidney infection,Pseudomonas_aeruginosa,Mostly with catheters or in hospital,CDC: Urinary tract infection basics
+Urinary tract infection,uti;cystitis;pyelonephritis;kidney infection,Enterococcus_faecalis,,CDC: Urinary tract infection basics
+Bloodstream infection,sepsis;bacteraemia;bacteremia;septicaemia;septicemia;blood infection,Escherichia_coli_Shigella,,WHO GLASS: bloodstream pathogens under surveillance
+Bloodstream infection,sepsis;bacteraemia;bacteremia;septicaemia;septicemia;blood infection,Klebsiella,,WHO GLASS: bloodstream pathogens under surveillance
+Bloodstream infection,sepsis;bacteraemia;bacteremia;septicaemia;septicemia;blood infection,Staphylococcus_aureus,,WHO GLASS: bloodstream pathogens under surveillance
+Bloodstream infection,sepsis;bacteraemia;bacteremia;septicaemia;septicemia;blood infection,Acinetobacter,,WHO GLASS: bloodstream pathogens under surveillance
+Bloodstream infection,sepsis;bacteraemia;bacteremia;septicaemia;septicemia;blood infection,Salmonella,,WHO GLASS: bloodstream pathogens under surveillance
+Bloodstream infection,sepsis;bacteraemia;bacteremia;septicaemia;septicemia;blood infection,Streptococcus_pneumoniae,,WHO GLASS: bloodstream pathogens under surveillance
+Neonatal sepsis,newborn sepsis;neonatal infection,Klebsiella,,WHO fact sheet: Sepsis
+Neonatal sepsis,newborn sepsis;neonatal infection,Escherichia_coli_Shigella,,WHO fact sheet: Sepsis
+Neonatal sepsis,newborn sepsis;neonatal infection,Staphylococcus_aureus,,WHO fact sheet: Sepsis
+Neonatal sepsis,newborn sepsis;neonatal infection,Streptococcus_agalactiae,Group B Streptococcus,WHO fact sheet: Sepsis
+Neonatal sepsis,newborn sepsis;neonatal infection,Acinetobacter,,WHO fact sheet: Sepsis
+Hospital-acquired pneumonia,pneumonia;ventilator-associated pneumonia;hap;vap;nosocomial pneumonia,Klebsiella,,CDC: Healthcare-associated infections
+Hospital-acquired pneumonia,pneumonia;ventilator-associated pneumonia;hap;vap;nosocomial pneumonia,Pseudomonas_aeruginosa,,CDC: Healthcare-associated infections
+Hospital-acquired pneumonia,pneumonia;ventilator-associated pneumonia;hap;vap;nosocomial pneumonia,Acinetobacter,,CDC: Healthcare-associated infections
+Hospital-acquired pneumonia,pneumonia;ventilator-associated pneumonia;hap;vap;nosocomial pneumonia,Staphylococcus_aureus,,CDC: Healthcare-associated infections
+Community-acquired pneumonia,pneumonia;chest infection,Streptococcus_pneumoniae,Many cases are viral,WHO fact sheet: Pneumonia
+Community-acquired pneumonia,pneumonia;chest infection,Haemophilus_influenzae,Many cases are viral,WHO fact sheet: Pneumonia
+Community-acquired pneumonia,pneumonia;chest infection,Staphylococcus_aureus,Many cases are viral,WHO fact sheet: Pneumonia
+Community-acquired pneumonia,pneumonia;chest infection,Legionella_pneumophila,Legionnaires' disease,WHO fact sheet: Legionellosis
+Skin and soft tissue infection,skin infection;abscess;boil;cellulitis;impetigo,Staphylococcus_aureus,,CDC: MRSA
+Skin and soft tissue infection,skin infection;abscess;boil;cellulitis;impetigo,Streptococcus_pyogenes,Group A Streptococcus,CDC: Group A Streptococcal disease
+MRSA infection,mrsa;methicillin-resistant staphylococcus aureus,Staphylococcus_aureus,A resistance type rather than a disease,CDC: MRSA
+Wound infection,surgical site infection;ssi;burn infection,Staphylococcus_aureus,,CDC: Surgical site infection
+Wound infection,surgical site infection;ssi;burn infection,Pseudomonas_aeruginosa,,CDC: Surgical site infection
+Wound infection,surgical site infection;ssi;burn infection,Acinetobacter,,CDC: Surgical site infection
+Wound infection,surgical site infection;ssi;burn infection,Klebsiella,,CDC: Surgical site infection
+Wound infection,surgical site infection;ssi;burn infection,Escherichia_coli_Shigella,,CDC: Surgical site infection
+Cystic fibrosis lung infection,cystic fibrosis;cf lung infection,Pseudomonas_aeruginosa,,CDC: Pseudomonas aeruginosa
+Cystic fibrosis lung infection,cystic fibrosis;cf lung infection,Staphylococcus_aureus,,CDC: Pseudomonas aeruginosa
+Cystic fibrosis lung infection,cystic fibrosis;cf lung infection,Burkholderia_cepacia_complex,,CDC: Burkholderia cepacia
+Bacterial meningitis,meningitis,Neisseria_meningitidis,,WHO fact sheet: Meningitis
+Bacterial meningitis,meningitis,Streptococcus_pneumoniae,,WHO fact sheet: Meningitis
+Bacterial meningitis,meningitis,Haemophilus_influenzae,,WHO fact sheet: Meningitis
+Bacterial meningitis,meningitis,Streptococcus_agalactiae,Mainly newborns,WHO fact sheet: Meningitis
+Bacterial meningitis,meningitis,Escherichia_coli_Shigella,Mainly newborns,WHO fact sheet: Meningitis
+Bacterial meningitis,meningitis,Listeria,,WHO fact sheet: Meningitis
+Listeriosis,listeria infection,Listeria,,WHO fact sheet: Listeriosis
+Tuberculosis,tb,Mycobacterium_tuberculosis,,WHO fact sheet: Tuberculosis
+Gonorrhoea,gonorrhea;clap,Neisseria_gonorrhoeae,,WHO fact sheet: Gonorrhoea
+Syphilis,,Treponema_pallidum,,WHO fact sheet: Syphilis
+C. difficile infection,clostridioides difficile;clostridium difficile;c diff;cdi,Clostridioides_difficile,,CDC: C. diff
+Influenza,flu,,Caused by a virus. NCBI Pathogen Detection tracks bacteria and a few fungi,WHO fact sheet: Influenza (seasonal)
+COVID-19,covid;coronavirus;sars-cov-2,,Caused by a virus. NCBI Pathogen Detection tracks bacteria and a few fungi,WHO fact sheet: COVID-19
+Measles,,,Caused by a virus. NCBI Pathogen Detection tracks bacteria and a few fungi,WHO fact sheet: Measles
+Dengue,,,Caused by a virus. NCBI Pathogen Detection tracks bacteria and a few fungi,WHO fact sheet: Dengue
+HIV,aids,,Caused by a virus. NCBI Pathogen Detection tracks bacteria and a few fungi,WHO fact sheet: HIV
+Malaria,,,Caused by a parasite. NCBI Pathogen Detection tracks bacteria and a few fungi,WHO fact sheet: Malaria

@@ -27,8 +27,8 @@ def open_page(name, **values):
     return page
 
 
-def test_all_ten_pages_exist():
-    assert len(PAGES) == 10
+def test_all_eleven_pages_exist():
+    assert len(PAGES) == 11
 
 
 @pytest.mark.parametrize("name", PAGES)
@@ -129,3 +129,26 @@ def test_banned_wording_is_absent():
         text = path.read_text(encoding="utf-8").lower()
         for phrase in banned:
             assert phrase not in text, f"{phrase!r} in {path.name}"
+
+
+@pytest.mark.parametrize("query, expected", [
+    ("typhoid", "Possible pathogens, not a diagnosis"),
+    ("Typhimurium", "Coverage only"),
+    ("influenza", "Caused by a virus"),
+    ("klebsiela", "Did you mean"),
+    ("cholera", "Tracked by NCBI, not imported here"),
+])
+def test_search_answers(query, expected):
+    page = open_page("search.py", search_query=query)
+    text = " ".join(str(e.value) for e in [*page.markdown, *page.info, *page.warning, *page.caption, *page.subheader, *page.get("table")])
+    text += " ".join(b.label for b in page.button)
+    assert expected in text, query
+
+
+def test_search_typhoid_counts_match_index():
+    page = open_page("search.py", search_query="typhoid")
+    index = data.search_index()
+    recorded = index[(index["field"] == "host_disease") & (index["organism"] == "Salmonella")
+                     & index["key"].str.contains(r"(?<!\w)(?:typhoid|enteric fever|paratyphoid)(?!\w)", regex=True)]
+    text = " ".join(m.value for m in page.markdown)
+    assert f"{int(recorded['isolates'].sum()):,} of" in text

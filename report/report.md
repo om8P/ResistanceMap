@@ -54,7 +54,7 @@ Upload delay matters as much as skew. Only Salmonella has 90% of isolates upload
 
 - **Spark in Docker.** PySpark 4.0.5 runs in local mode in the `apache/spark:4.0.5-python3` container, capped at 5 GB. The host's Java 22 is not supported by Spark, and Docker makes the run repeatable.
 - **Parquet throughout.** Raw TSV is converted once. Later steps read only the columns they need, partitioned by organism.
-- **Prepared results.** The pipeline writes 32 tables and JSON files to `results/` (20 MB). The Streamlit app reads only these, so it runs on a laptop with Docker stopped.
+- **Prepared results.** The pipeline writes 33 tables and JSON files to `results/` (20 MB). The Streamlit app reads only these, so it runs on a laptop with Docker stopped.
 - **Settings in files.** Thresholds (minimum sample, provisional years, hotspot margin, rising test) are in `config/settings.json`, so they can be changed without code changes.
 
 | Step | Script | Output |
@@ -91,7 +91,7 @@ Upload delay matters as much as skew. Only Salmonella has 90% of isolates upload
 **Gene and lab agreement.** For the 24,803 isolates with lab results, the share lab-resistant with and without each gene.
 
 ## 6. The app
-Ten pages, each answering one question: Map and trends, Early warnings, Last-resort drugs, Gene profile, Cluster watch, Country report (with download), Compare countries, Guided questions, Evidence panel and About the data. Every page offers the all-isolates or outbreak-adjusted view, a clinical-only filter and three-year pooled periods for small samples. Every rate is shown with its count, interval and confidence label. A notice on every page says the figures are not for clinical use.
+Eleven pages, each answering one question: Map and trends, Search, Early warnings, Last-resort drugs, Gene profile, Cluster watch, Country report (with download), Compare countries, Guided questions, Evidence panel and About the data. Search says whether a pathogen, serovar, strain, NCBI taxonomy ID or disease is covered and how good the data is. For a disease it lists possible pathogens from a hand-checked list, never a diagnosis, beside what submitters recorded in the free-text `host_disease` field. Every rate page offers the all-isolates or outbreak-adjusted view, a clinical-only filter and three-year pooled periods for small samples. Every rate is shown with its count, interval and confidence label. A notice on every page says the figures are not for clinical use.
 
 ## 7. Findings
 All among sequenced isolates, genotypic resistance.

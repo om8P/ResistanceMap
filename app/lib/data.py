@@ -124,3 +124,20 @@ def field_fill():
         for field, values in item["fill"].items():
             totals[field] = totals.get(field, 0) + values["pct_filled"] * item["rows"]
     return {field: value / rows for field, value in totals.items()}
+
+
+@st.cache_data(show_spinner=False)
+def ncbi_organisms():
+    """Organism groups NCBI Pathogen Detection tracks (config/ncbi_organisms.csv)."""
+    return pd.read_csv(CONFIG / "ncbi_organisms.csv")
+
+
+@st.cache_data(show_spinner=False)
+def disease_list():
+    """Hand-checked disease to possible pathogen rows (config/disease_pathogens.csv)."""
+    return pd.read_csv(CONFIG / "disease_pathogens.csv")
+
+
+@st.cache_data(show_spinner=False)
+def search_index():
+    return pd.read_parquet(RESULTS / "search_index.parquet")

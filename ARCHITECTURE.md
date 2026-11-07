@@ -120,7 +120,7 @@ Under the minimum sample, tables keep `n` and `positives` but leave `rate` and l
 | Early warning timeline (optional) | What arrived recently, on how much evidence? | `early_warnings` |
 | Organism by drug class heatmap (optional) | Which resistance matters for which pathogen? | `prevalence` |
 | Data coverage chart (optional) | Can I trust this view? | `coverage` |
-| Pathogen search (optional, after the core) | Is this pathogen, strain or disease covered, and how good is the data? | `data_profile.json`, `pipeline_summary.json`, `config/disease_pathogens.csv` |
+| Pathogen search (built) | Is this pathogen, strain or disease covered, and how good is the data? | `search_index`, `coverage`, `data_profile.json` (`search_fill`), `pipeline_summary.json`, `config/disease_pathogens.csv`, `config/ncbi_organisms.csv` |
 | Pathogen import (optional, last) | Can I analyse a pathogen not yet imported? | Runs the pipeline; needs Docker and internet |
 
 ## Result files
@@ -138,6 +138,7 @@ All in `results/`.
 | `early_warnings.parquet` | New appearances and evidence counts |
 | `last_resort.parquet`, `last_resort_adjusted.parquet` | Carbapenem and colistin rates by mechanism |
 | `gene_summary.parquet` | Per-gene totals and sources |
+| `search_index.parquet` | Per organism, field (`scientific_name`, `serovar`, `strain`, `host_disease`, `taxid`, `species_taxid`) and value: kept isolates, countries, first and last year. Strains only where the field is at least 50% filled and the value is seen at least 5 times (`config/settings.json`, `search`) |
 | `prevalence_pooled`, `last_resort_pooled`, each with `_adjusted` | Three-year periods, with `period_start` and `period_end` |
 | `prevalence_by_source`, `last_resort_by_source`, `rising_by_source`, each with `_adjusted` | Clinical and environmental views, with `epi_type` |
 | `cluster_watch.parquet` | Recent clusters seen in at least 2 countries |

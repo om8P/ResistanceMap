@@ -3,9 +3,13 @@
 File names change with each release, so they are read from the directory
 listings and recorded in data/raw/manifest.json for the later scripts.
 
-Usage: python src/download.py [--organism NAME] [--with-metadata NAME]
+With --list it only writes config/ncbi_organisms.csv, the organism groups NCBI
+tracks, which pathogen search uses to say what is covered.
+
+Usage: python src/download.py [--organism NAME] [--with-metadata NAME] [--list]
 """
 import argparse
+import csv
 import json
 import re
 import sys
@@ -31,6 +35,8 @@ RAW = ROOT / "data" / "raw"
 MANIFEST = RAW / "manifest.json"
 CHUNK = 1024 * 1024
 RETRIES = 5
+NCBI_LIST = ROOT / "config" / "ncbi_organisms.csv"
+NOT_ORGANISMS = {"BioProject_Hierarchy"}
 
 
 def open_url(url, start=0):
@@ -110,12 +116,33 @@ def download_organism(organism, with_metadata):
     return record
 
 
+def parse_listing(listing):
+    """Organism folder names in a Results directory listing, in name order."""
+    return sorted(set(re.findall(r'href="([A-Z][A-Za-z0-9_.-]*)/"', listing)) - NOT_ORGANISMS)
+
+
+def write_ncbi_list(path=NCBI_LIST):
+    with open_url(f"{BASE}/Results/") as response:
+        names = parse_listing(response.read().decode("utf-8", "replace"))
+    with open(path, "w", encoding="utf-8", newline="") as target:
+        writer = csv.writer(target, lineterminator="\n")
+        writer.writerow(["organism", "label", "listed"])
+        for name in names:
+            writer.writerow([name, name.replace("_", " "), time.strftime("%Y-%m-%d")])
+    print(f"{len(names)} organism groups written to {path.relative_to(ROOT)}", flush=True)
+    return names
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--organism", choices=ORGANISMS, help="Download one organism only")
     parser.add_argument("--with-metadata", choices=ORGANISMS, action="append", default=[],
                         help="Also download this organism's Metadata file for the denominator check")
+    parser.add_argument("--list", action="store_true", help="Only write config/ncbi_organisms.csv")
     args = parser.parse_args()
+    if args.list:
+        write_ncbi_list()
+        return 0
 
     manifest = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {"organisms": {}, "reference": {}}
     for organism in [args.organism] if args.organism else ORGANISMS:

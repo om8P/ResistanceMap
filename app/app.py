@@ -8,6 +8,7 @@ st.set_page_config(page_title="ResistanceMap", layout="wide")
 pages = {
     "Explore": [
         st.Page("pages/map_trends.py", title="Map and trends", default=True),
+        st.Page("pages/search.py", title="Search"),
         st.Page("pages/early_warnings.py", title="Early warnings"),
         st.Page("pages/last_resort.py", title="Last-resort drugs"),
         st.Page("pages/gene_profile.py", title="Gene profile"),
