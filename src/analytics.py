@@ -13,11 +13,12 @@ from pathlib import Path
 from pyspark.sql import SparkSession, Window
 from pyspark.sql import functions as F
 
-from clean import PARQUET, ROOT, SUMMARY, read_organisms
+from clean import PARQUET, ROOT, SUMMARY
+from datasets import core_organisms, read_organisms, redirected, results_dir
 from profile_data import is_real
 
 SETTINGS = ROOT / "config" / "settings.json"
-RESULTS = ROOT / "results"
+RESULTS = results_dir()
 DEV_RESULTS = ROOT / "data" / "dev_results"
 AWARE = ROOT / "config" / "aware.csv"
 Z_95 = 1.96
@@ -515,7 +516,7 @@ def lab_coverage(calls, isolates):
 def read_lab_results(spark, organism):
     """Read lab results from each organism's source table, keeping only the needed columns."""
     frames = []
-    for row in read_organisms():
+    for row in read_organisms(organism):
         if organism and row["organism"] != organism:
             continue
         table = spark.read.parquet(str(PARQUET / "amr" / row["organism"]))
@@ -527,8 +528,8 @@ def read_lab_results(spark, organism):
 
 
 def output_dir(organism):
-    """A single-organism run must not replace the full results."""
-    return DEV_RESULTS if organism else RESULTS
+    """A single-organism run must not replace the full results, unless an import named its own folder."""
+    return DEV_RESULTS if organism and not redirected() else RESULTS
 
 
 def write_table(frame, name, folder=RESULTS):
@@ -553,9 +554,9 @@ def main():
     settings = load_settings()
     isolates = spark.read.parquet(str(PARQUET / "isolates"))
     raw_genes = spark.read.parquet(str(PARQUET / "isolate_genes"))
-    if args.organism:
-        isolates = isolates.filter(F.col("organism") == args.organism)
-        raw_genes = raw_genes.filter(F.col("organism") == args.organism)
+    keep = [args.organism] if args.organism else core_organisms()
+    isolates = isolates.filter(F.col("organism").isin(keep))
+    raw_genes = raw_genes.filter(F.col("organism").isin(keep))
     catalog = spark.read.parquet(str(PARQUET / "reference" / "gene_catalog")).cache()
     isolates = isolates.cache()
     genes = add_family(raw_genes, family_map(catalog)).cache()

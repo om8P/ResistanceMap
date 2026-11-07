@@ -1,0 +1,53 @@
+{
+  "organisms": {
+    "Vibrio_cholerae": {
+      "clean": {
+        "rows_in": 21214,
+        "rows_dropped_no_biosample": 1,
+        "duplicate_groups": 0,
+        "duplicate_rows_removed": 0,
+        "duplicate_groups_with_different_genes": 0,
+        "isolates_kept": 21213,
+        "location_flags": {
+          "placeholder": 930,
+          "unrecognised": 22,
+          "missing": 5889,
+          "None": 14372
+        },
+        "unrecognised_locations": {
+          "Azerbaijan": 15,
+          "Yemen": 3,
+          "Turkmenistan": 2,
+          "Czechoslovakia": 1,
+          "USSR": 1
+        },
+        "year_flags": {
+          "missing": 6549,
+          "None": 14664
+        },
+        "isolates_in_cluster": 18026,
+        "isolates_with_no_core_genes": 9
+      },
+      "genes": {
+        "gene_rows": 190838,
+        "repeats_removed": 0,
+        "by_match_source": {
+          "family": 159715,
+          "mutation": 24766,
+          "family_ambiguous": 1401,
+          "unmapped": 1387,
+          "allele": 3569
+        },
+        "catalog_match_pct": 99.273,
+        "rows_without_drug_class": 1387,
+        "rows_without_drug_subclass": 1507,
+        "rows_inactive_allele": 0,
+        "top_unmapped": {
+          "vat (HMM)": 1376,
+          "mph (HMM)": 9,
+          "ant(3'') (HMM)": 2
+        }
+      }
+    }
+  }
+}

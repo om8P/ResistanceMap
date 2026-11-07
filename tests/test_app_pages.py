@@ -136,7 +136,7 @@ def test_banned_wording_is_absent():
     ("Typhimurium", "Coverage only"),
     ("influenza", "Caused by a virus"),
     ("klebsiela", "Did you mean"),
-    ("cholera", "Tracked by NCBI, not imported here"),
+    ("cholera", "Other pathogens NCBI tracks"),
 ])
 def test_search_answers(query, expected):
     page = open_page("search.py", search_query=query)
@@ -152,3 +152,24 @@ def test_search_typhoid_counts_match_index():
                      & index["key"].str.contains(r"(?<!\w)(?:typhoid|enteric fever|paratyphoid)(?!\w)", regex=True)]
     text = " ".join(m.value for m in page.markdown)
     assert f"{int(recorded['isolates'].sum()):,} of" in text
+
+
+IMPORTED = list(data.imported_datasets())
+IMPORTED_PAGES = ["map_trends.py", "early_warnings.py", "gene_profile.py", "about.py"]
+
+
+@pytest.mark.skipif(not IMPORTED, reason="no imported pathogen in results/imported/")
+@pytest.mark.parametrize("name", IMPORTED_PAGES)
+def test_imported_pages_open_and_say_so(name):
+    page = open_page(name, dataset=IMPORTED[0])
+    text = " ".join(str(e.value) for e in page.info)
+    assert "Imported pathogen" in text and "Gene catalog match" in text
+
+
+@pytest.mark.skipif(not IMPORTED, reason="no imported pathogen in results/imported/")
+def test_imported_dataset_shows_only_general_pages():
+    app = AppTest.from_file(str(ROOT / "app" / "app.py"), default_timeout=120)
+    app.session_state["dataset"] = IMPORTED[0]
+    app.run()
+    assert not app.exception
+    assert any("only the general pages" in str(e.value) for e in app.sidebar.info)

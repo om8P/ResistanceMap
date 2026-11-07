@@ -19,6 +19,8 @@ import threading
 import time
 from pathlib import Path
 
+from datasets import core_organisms
+
 ROOT = Path(__file__).resolve().parent.parent
 GENES = ROOT / "data" / "parquet" / "isolate_genes"
 OUTPUT = ROOT / "results" / "timing.json"
@@ -36,7 +38,7 @@ def run_spark(answer):
     spark = SparkSession.builder.appName("timing").config("spark.sql.shuffle.partitions", "16").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
     started = time.perf_counter()
-    genes = spark.read.parquet(str(GENES)).filter(F.col("country").isNotNull() & F.col("year").isNotNull()
+    genes = spark.read.parquet(str(GENES)).filter(F.col("organism").isin(core_organisms()) & F.col("country").isNotNull() & F.col("year").isNotNull()
                                                   & F.col("drug_class").isNotNull())
     split = (genes.withColumn("drug_class", F.explode(F.split("drug_class", "/")))
              .withColumn("drug_class", F.regexp_replace(F.trim("drug_class"), "FUSIDIC ACID", "FUSIDIC_ACID")))
@@ -52,7 +54,7 @@ def run_pandas(answer):
     import pandas as pd
 
     started = time.perf_counter()
-    frame = pd.read_parquet(GENES, columns=COLUMNS + ["organism"])
+    frame = pd.read_parquet(GENES, columns=COLUMNS + ["organism"], filters=[("organism", "in", core_organisms())])
     frame = frame.dropna(subset=["country", "year", "drug_class"])
     frame["year"] = frame["year"].astype(int)
     frame["drug_class"] = frame["drug_class"].str.split("/")

@@ -15,19 +15,33 @@ def header(title, intro=None):
     if intro:
         st.write(intro)
     st.caption(NOTICE)
+    if data.is_imported():
+        imported_note()
+
+
+def imported_note():
+    """Says which imported pathogen is shown and how well its genes matched the catalog."""
+    organism = data.dataset()
+    genes = data.load_json("pipeline_summary")["organisms"][organism]["genes"]
+    status = data.import_status(organism) or {}
+    taxon = "its own point-mutation table" if status.get("taxon") else "no point-mutation table, so point mutations are not counted"
+    st.info(f"Imported pathogen: {data.organisms()[organism]}, imported from NCBI's current release on {str(status.get('finished', ''))[:10]}. "
+            f"Gene catalog match: {genes['catalog_match_pct']}% ({genes['gene_rows']:,} gene entries), using {taxon}. "
+            "Its genes are looked up in the same catalog as the six core organisms.")
 
 
 def organism_picker(key, container=st, include_all=False):
     names = data.organisms()
     options = (["ALL"] if include_all else []) + list(names)
     labels = {"ALL": "All organisms", **names}
-    default = options.index(DEFAULT_ORGANISM) if not include_all else 0
+    default = options.index(DEFAULT_ORGANISM) if not include_all and DEFAULT_ORGANISM in options else 0
     return container.selectbox("Organism", options, index=default, format_func=labels.get, key=key)
 
 
 def country_picker(key, container=st, label="Country"):
     options = data.countries()
-    return container.selectbox(label, options, index=options.index(DEFAULT_COUNTRY), key=key)
+    default = options.index(DEFAULT_COUNTRY) if DEFAULT_COUNTRY in options else 0
+    return container.selectbox(label, options, index=default, key=key)
 
 
 def measure_picker(key, container=st):

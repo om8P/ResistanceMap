@@ -1,0 +1,304 @@
+{
+  "organisms": {
+    "Vibrio_cholerae": {
+      "pdg_version": "PDG000000055.1023",
+      "source_file": "PDG000000055.1023.amr.metadata.tsv",
+      "rows": 21214,
+      "distinct_biosample_acc": 21214,
+      "fill": {
+        "collection_date": {
+          "pct_filled": 69.12,
+          "pct_placeholder": 2.7,
+          "pct_empty": 28.18,
+          "top_placeholders": {
+            "missing": 572
+          }
+        },
+        "geo_loc_name": {
+          "pct_filled": 67.85,
+          "pct_placeholder": 4.38,
+          "pct_empty": 27.76,
+          "top_placeholders": {
+            "not collected": 910,
+            "not provided": 17,
+            "missing: lab stock": 3
+          }
+        },
+        "host": {
+          "pct_filled": 31.88,
+          "pct_placeholder": 0.02,
+          "pct_empty": 68.1,
+          "top_placeholders": {
+            "not collected": 5
+          }
+        },
+        "isolation_source": {
+          "pct_filled": 40.44,
+          "pct_placeholder": 0.84,
+          "pct_empty": 58.72,
+          "top_placeholders": {
+            "not collected": 174,
+            "not provided": 5
+          }
+        },
+        "epi_type": {
+          "pct_filled": 45.73,
+          "pct_placeholder": 0.0,
+          "pct_empty": 54.27,
+          "top_placeholders": {}
+        },
+        "lat_lon": {
+          "pct_filled": 16.27,
+          "pct_placeholder": 7.87,
+          "pct_empty": 75.86,
+          "top_placeholders": {
+            "not collected": 1666,
+            "not provided": 4
+          }
+        },
+        "AST_phenotypes": {
+          "pct_filled": 0.01,
+          "pct_placeholder": 0.0,
+          "pct_empty": 99.99,
+          "top_placeholders": {}
+        },
+        "AMR_genotypes_core": {
+          "pct_filled": 99.96,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.04,
+          "top_placeholders": {}
+        }
+      },
+      "search_fill": {
+        "scientific_name": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 199
+        },
+        "serovar": {
+          "pct_filled": 4.54,
+          "pct_placeholder": 0.41,
+          "pct_empty": 95.05,
+          "top_placeholders": {
+            "not provided": 82,
+            "-": 4
+          },
+          "distinct_real": 18
+        },
+        "strain": {
+          "pct_filled": 48.32,
+          "pct_placeholder": 0.0,
+          "pct_empty": 51.68,
+          "top_placeholders": {},
+          "distinct_real": 9318
+        },
+        "host_disease": {
+          "pct_filled": 17.19,
+          "pct_placeholder": 0.88,
+          "pct_empty": 81.93,
+          "top_placeholders": {
+            "not provided": 136,
+            "not collected": 51
+          },
+          "distinct_real": 46
+        },
+        "taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 199
+        },
+        "species_taxid": {
+          "pct_filled": 100.0,
+          "pct_placeholder": 0.0,
+          "pct_empty": 0.0,
+          "top_placeholders": {},
+          "distinct_real": 1
+        }
+      },
+      "dates": {
+        "formats": {
+          "YYYY-MM-DD": 3862,
+          "YYYY": 10010,
+          "YYYY-MM": 792
+        },
+        "other_examples": {},
+        "multi_year_range_examples": {},
+        "isolates_per_year": {
+          "1931": 1,
+          "1934": 1,
+          "1937": 3,
+          "1938": 2,
+          "1941": 4,
+          "1942": 1,
+          "1946": 9,
+          "1948": 1,
+          "1949": 3,
+          "1954": 2,
+          "1956": 2,
+          "1957": 7,
+          "1958": 6,
+          "1961": 43,
+          "1962": 44,
+          "1963": 6,
+          "1964": 13,
+          "1965": 8,
+          "1966": 16,
+          "1967": 3,
+          "1968": 16,
+          "1969": 10,
+          "1970": 24,
+          "1971": 11,
+          "1972": 10,
+          "1973": 24,
+          "1974": 30,
+          "1975": 26,
+          "1976": 22,
+          "1977": 39,
+          "1978": 30,
+          "1979": 41,
+          "1980": 45,
+          "1981": 38,
+          "1982": 20,
+          "1983": 38,
+          "1984": 9,
+          "1985": 34,
+          "1986": 27,
+          "1987": 23,
+          "1988": 12,
+          "1989": 25,
+          "1990": 20,
+          "1991": 67,
+          "1992": 74,
+          "1993": 123,
+          "1994": 135,
+          "1995": 46,
+          "1996": 25,
+          "1997": 36,
+          "1998": 56,
+          "1999": 48,
+          "2000": 70,
+          "2001": 111,
+          "2002": 113,
+          "2003": 124,
+          "2004": 116,
+          "2005": 118,
+          "2006": 105,
+          "2007": 429,
+          "2008": 200,
+          "2009": 485,
+          "2010": 562,
+          "2011": 386,
+          "2012": 354,
+          "2013": 628,
+          "2014": 397,
+          "2015": 680,
+          "2016": 566,
+          "2017": 552,
+          "2018": 1698,
+          "2019": 780,
+          "2020": 505,
+          "2021": 487,
+          "2022": 1210,
+          "2023": 1109,
+          "2024": 837,
+          "2025": 416,
+          "2026": 267
+        }
+      },
+      "upload_delay": {
+        "latest_upload_year": 2026,
+        "cohort_collection_years": [
+          2016,
+          2021
+        ],
+        "cohort_rows": 4588,
+        "cumulative_pct_by_lag_years": {
+          "0": 5.71,
+          "1": 11.27,
+          "2": 19.12,
+          "3": 26.83,
+          "4": 38.14,
+          "5": 60.85
+        },
+        "complete_pct_target": 90,
+        "years_to_complete": null,
+        "provisional_from_year": null,
+        "rows_created_before_collected": 0
+      },
+      "countries": {
+        "distinct_values": 101,
+        "top": {
+          "Bangladesh": 2179,
+          "USA": 2072,
+          "China": 1810,
+          "Democratic Republic of the Congo": 1058,
+          "India": 847,
+          "Haiti": 717,
+          "United Kingdom": 426,
+          "Thailand": 382,
+          "Australia": 365,
+          "Viet Nam": 340,
+          "Cameroon": 292,
+          "Kenya": 267,
+          "Zambia": 260,
+          "Russia": 247,
+          "Mozambique": 246
+        },
+        "india_count": 847,
+        "india_pct_of_rows": 3.99
+      },
+      "gene_audit": {
+        "core_no_genes": 9,
+        "core_no_genes_pct": 0.04,
+        "core_no_genes_but_any_genes": 0,
+        "any_no_genes": 9,
+        "core_no_gene_values": {
+          "None": 9
+        },
+        "commonest_short_core_values": {
+          "\"almE,almF,almG\"": 1343,
+          "\"almE,almF,almG,varG\"": 1036,
+          "\"almE,almF,almG,vat=HMM\"": 387,
+          "\"almE,almF,almG,catB9\"": 184,
+          "\"almE,almF,almG,qnrVC4\"": 89,
+          "\"almE,almF,almG,blaPSE\"": 81,
+          "\"almE,almF,almG,qnrVC\"": 66,
+          "\"varG\"": 24,
+          "\"almE,almF,almG,blaVCC-1\"": 16,
+          "\"almE,almF,almG,qnrVC9\"": 12
+        },
+        "core_gene_count_first_10": {
+          "1": 29,
+          "2": 2,
+          "3": 1382,
+          "4": 2423,
+          "5": 3151,
+          "6": 652,
+          "7": 768,
+          "8": 1401,
+          "9": 164,
+          "10": 546
+        }
+      },
+      "analysis_coverage": {
+        "not_analysed_rows": 0,
+        "no_core_but_gene_count_above_zero": 0,
+        "by_analysis_type": {
+          "COMBINED": {
+            "rows": 10460,
+            "pct_no_core_genes": 0.0
+          },
+          "NUCLEOTIDE": {
+            "rows": 10754,
+            "pct_no_core_genes": 0.08
+          }
+        }
+      }
+    }
+  },
+  "denominator_check": {}
+}

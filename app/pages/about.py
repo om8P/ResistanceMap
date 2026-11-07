@@ -34,8 +34,8 @@ first = int(per.loc[per["isolates"] >= MIN_SAMPLE, "year"].min()) if len(keep) e
 shown = per[per["country"].isin(keep) & (per["year"] >= max(first, 2000))]
 ui.chart(charts.count_heatmap(shown, "year", "country", "isolates", "Sequenced isolates by country and year"))
 st.caption(f"Countries in name order. {per['country'].nunique() - len(keep)} countries with no year at the minimum are left out. Colour is on a log scale. "
-           f"Across all data, the USA holds {shares['USA'] / total:.1%} of isolates and India {shares['India'] / total:.1%}. "
-           f"{no_country / total:.1%} have no usable country and {no_year / total:.1%} no usable year, so they are not on this chart. "
+           + "".join(f"{name} holds {shares[name] / total:.1%} of isolates ({int(shares[name]):,} of {total:,}). " for name in ["USA", "India"] if name in shares)
+           + f"{no_country / total:.1%} have no usable country and {no_year / total:.1%} no usable year, so they are not on this chart. "
            f"{int((coverage['isolates'] >= MIN_SAMPLE).sum()):,} of {len(coverage):,} organism, country and year groups reach the minimum.")
 
 st.subheader("Data quality by organism")
@@ -83,6 +83,9 @@ Credit: GBD 2021 Antimicrobial Resistance Collaborators, [The Lancet, 2024; 404:
 """)
 
 st.subheader("Checks")
+if not data.has_result("sanity_checks.json"):
+    st.write("The reconciliation checks run on the six core organisms only. For an imported pathogen, see its isolate and coverage counts above.")
+    st.stop()
 sanity = data.load_json("sanity_checks")
 reconciliation = sanity["reconciliation"]
 st.write(f"Isolates in the main table and in coverage: {reconciliation['isolates_in_table']:,} and {reconciliation['isolates_in_coverage']:,}. "

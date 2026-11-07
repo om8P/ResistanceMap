@@ -15,8 +15,8 @@ import json
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 
-from analytics import DEV_RESULTS, RESULTS, load_settings, write_table
-from clean import read_organisms
+from analytics import load_settings, output_dir, write_table
+from datasets import read_organisms
 from profile_data import PARQUET, PROFILE, SEARCH_COLUMNS, is_real
 
 FIELDS = ["scientific_name", "serovar", "strain", "host_disease", "taxid", "species_taxid"]
@@ -55,7 +55,7 @@ def index_rows(raw, isolates, organism, strain_allowed, strain_min_isolates):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--organism", help="Index one organism only, into data/dev_results/")
+    parser.add_argument("--organism", help="Index one organism only, into data/dev_results/ or RESULTS_DIR")
     args = parser.parse_args()
 
     spark = (SparkSession.builder.appName("search_index").config("spark.sql.shuffle.partitions", "16")
@@ -65,7 +65,7 @@ def main():
     profile = json.loads(PROFILE.read_text())["organisms"]
 
     frames = []
-    for row in read_organisms():
+    for row in read_organisms(args.organism):
         organism = row["organism"]
         if args.organism and organism != args.organism:
             continue
@@ -78,7 +78,7 @@ def main():
     result = frames[0]
     for frame in frames[1:]:
         result = result.unionByName(frame)
-    write_table(result.orderBy("organism", "field", "key"), "search_index", DEV_RESULTS if args.organism else RESULTS)
+    write_table(result.orderBy("organism", "field", "key"), "search_index", output_dir(args.organism))
     spark.stop()
 
 

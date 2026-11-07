@@ -1,5 +1,9 @@
-"""Cached readers for results/ and config/. The app reads nothing else, so it runs with Docker stopped."""
+"""Cached readers for results/ and config/. The app reads nothing else, so it runs with Docker stopped.
+
+The dataset is the six core organisms (results/) or one imported pathogen (results/imported/<organism>/),
+chosen in the sidebar. Cached readers take the results folder as an argument, so switching never mixes them."""
 import json
+from pathlib import Path
 
 import pandas as pd
 import streamlit as st
@@ -7,7 +11,10 @@ import streamlit as st
 from lib.rules import ROOT, table_name
 
 RESULTS = ROOT / "results"
+IMPORTED_RESULTS = RESULTS / "imported"
 CONFIG = ROOT / "config"
+CORE = "core"
+DATASET_KEY = "dataset"
 
 LAST_RESORT_MEASURES = [("last_resort", "CARBAPENEM", "acquired"), ("last_resort", "CARBAPENEM", "any_excl_intrinsic"),
                         ("last_resort", "COLISTIN", "acquired"), ("last_resort", "COLISTIN", "any_excl_intrinsic"),
@@ -17,28 +24,77 @@ MECHANISM_LABEL = {"acquired": "acquired genes", "any_excl_intrinsic": "any mech
                    "disrupted": "disrupted genes", "intrinsic": "intrinsic genes"}
 
 
+def import_status(organism):
+    path = IMPORTED_RESULTS / organism / "status.json"
+    try:
+        return json.loads(path.read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def imported_rows():
+    path = CONFIG / "imported.csv"
+    return pd.read_csv(path, dtype=str, keep_default_na=False) if path.exists() else pd.DataFrame(columns=["organism", "label", "taxon"])
+
+
+def imported_datasets():
+    """Imported pathogens whose import finished, as id to label."""
+    rows = imported_rows()
+    return {r.organism: r.label for r in rows.itertuples() if (import_status(r.organism) or {}).get("state") == "done"}
+
+
+def dataset():
+    chosen = st.session_state.get(DATASET_KEY, CORE)
+    return chosen if chosen == CORE or chosen in imported_datasets() else CORE
+
+
+def is_imported():
+    return dataset() != CORE
+
+
+def results_root():
+    return str(RESULTS if dataset() == CORE else IMPORTED_RESULTS / dataset())
+
+
 @st.cache_data(max_entries=128, show_spinner=False)
-def _read(name, filters):
+def _read(root, name, filters):
     pushed = [(k, "in", list(v)) if isinstance(v, tuple) else (k, "==", v) for k, v in filters] or None
-    return pd.read_parquet(RESULTS / f"{name}.parquet", filters=pushed)
+    return pd.read_parquet(Path(root) / f"{name}.parquet", filters=pushed)
 
 
 def load(name, **filters):
-    """Read a result table, with equality or `in` filters pushed down to Parquet."""
+    """Read a result table of the chosen dataset, with equality or `in` filters pushed down to Parquet."""
     clean = tuple(sorted((k, tuple(v) if isinstance(v, (list, tuple, set)) else v) for k, v in filters.items() if v is not None))
-    return _read(name, clean)
+    return _read(results_root(), name, clean)
 
 
 @st.cache_data(show_spinner=False)
+def _load_json(root, name):
+    return json.loads((Path(root) / f"{name}.json").read_text())
+
+
 def load_json(name):
-    return json.loads((RESULTS / f"{name}.json").read_text())
+    return _load_json(results_root(), name)
+
+
+def has_result(name):
+    return (Path(results_root()) / name).exists()
 
 
 @st.cache_data(show_spinner=False)
-def organisms():
-    """Organism id to display label, in name order."""
-    frame = pd.read_csv(CONFIG / "organisms.csv").sort_values("label")
+def _organisms(chosen):
+    frame = pd.read_csv(CONFIG / "organisms.csv") if chosen == CORE else imported_rows().query("organism == @chosen")
+    frame = frame.sort_values("label")
     return dict(zip(frame["organism"], frame["label"]))
+
+
+def organisms():
+    """Organism id to display label, in name order, for the chosen dataset."""
+    return _organisms(dataset())
+
+
+def core_organisms():
+    return _organisms(CORE)
 
 
 def coverage(**filters):
@@ -50,26 +106,43 @@ def coverage(**filters):
     return frame
 
 
-@st.cache_data(show_spinner=False)
 def countries():
+    return _countries(results_root())
+
+
+@st.cache_data(show_spinner=False)
+def _countries(root):
     return sorted(coverage()["country"].unique())
 
 
-@st.cache_data(show_spinner=False)
 def latest_data_year():
+    return _latest_data_year(results_root())
+
+
+@st.cache_data(show_spinner=False)
+def _latest_data_year(root):
     return int(coverage()["year"].max())
 
 
-@st.cache_data(show_spinner=False)
 def provisional_start():
-    frame = coverage()
-    return int(frame.loc[frame["provisional"], "year"].min())
+    return _provisional_start(results_root())
 
 
 @st.cache_data(show_spinner=False)
+def _provisional_start(root):
+    frame = coverage()
+    years = frame.loc[frame["provisional"], "year"]
+    return int(years.min()) if len(years) else int(frame["year"].max()) + 1
+
+
 def drug_classes():
+    return _drug_classes(results_root())
+
+
+@st.cache_data(show_spinner=False)
+def _drug_classes(root):
     """Classes from prevalence. Colistin is left out here because the last-resort measures cover it."""
-    frame = pd.read_parquet(RESULTS / "prevalence.parquet", columns=["drug_class"])
+    frame = pd.read_parquet(Path(root) / "prevalence.parquet", columns=["drug_class"])
     return sorted(set(frame["drug_class"]) - {"COLISTIN"})
 
 
@@ -114,8 +187,12 @@ def latest_inputs(measure, organism, country, adjusted=False, source="all"):
     return yearly, pooled
 
 
-@st.cache_data(show_spinner=False)
 def field_fill():
+    return _field_fill(results_root())
+
+
+@st.cache_data(show_spinner=False)
+def _field_fill(root):
     """Share filled for each source field, weighted by rows across organisms."""
     profile = load_json("data_profile")["organisms"]
     totals, rows = {}, 0
@@ -140,4 +217,5 @@ def disease_list():
 
 @st.cache_data(show_spinner=False)
 def search_index():
+    """The core search index. Search covers the core dataset; imported pathogens are listed by name."""
     return pd.read_parquet(RESULTS / "search_index.parquet")

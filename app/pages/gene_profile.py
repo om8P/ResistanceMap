@@ -18,7 +18,7 @@ def gene_options():
 
 left, right = st.columns(2)
 options = gene_options()
-gene = left.selectbox("Gene or gene family", options, index=options.index("blaNDM"), key="gene_name")
+gene = left.selectbox("Gene or gene family", options, index=options.index("blaNDM") if "blaNDM" in options else 0, key="gene_name")
 organism = ui.organism_picker("gene_organism", right, include_all=True)
 
 summary = data.load("gene_summary")

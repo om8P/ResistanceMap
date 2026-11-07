@@ -137,7 +137,7 @@ def main():
     catalog = spark.read.parquet(str(PARQUET / "reference" / "gene_catalog")).cache()
     mutations = spark.read.parquet(str(PARQUET / "reference" / "point_mutations")).cache()
 
-    for row in read_organisms():
+    for row in read_organisms(args.organism):
         organism = row["organism"]
         if args.organism and organism != args.organism:
             continue

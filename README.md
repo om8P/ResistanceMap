@@ -76,9 +76,16 @@ Run from the project folder. In Git Bash on Windows, keep `MSYS_NO_PATHCONV=1`, 
 
 To try the pipeline on one small organism first, add `--organism Pseudomonas_aeruginosa` to each step from `download.py` to `analytics.py`. With that flag, `analytics.py` writes to `data/dev_results/` and leaves `results/` alone.
 
+## Import another pathogen
+NCBI tracks over 100 organism groups (`config/ncbi_organisms.csv`). Any of them can be added as a separate dataset, without changing the core results.
+```bash
+python src/import_pathogen.py Vibrio_cholerae
+```
+This adds it to `config/imported.csv`, downloads its files and runs the pipeline for it alone in the Spark container (Docker and internet needed). Results go to `results/imported/<organism>/`, progress to `status.json` there and output to `logs/import_<organism>.log`. The Search page can start the same import with a button. Afterwards, choose the pathogen under **Dataset** in the sidebar; browsing it works offline. Imported data shows the general pages only, and states its gene catalog match rate, because organisms with no point-mutation table leave mutations uncounted. Full rebuilds of the core leave imported pathogens out.
+
 ## Tests
 ```bash
-python -m pytest tests/test_app_rules.py tests/test_app_pages.py tests/test_aware.py tests/test_search.py -q -p no:cacheprovider
+python -m pytest tests/test_app_rules.py tests/test_app_pages.py tests/test_aware.py tests/test_search.py tests/test_import.py -q -p no:cacheprovider
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pytest tests -q -p no:cacheprovider
 ```
 The first runs on the host in about a minute. The second runs every test in the container and takes about 3 to 5 minutes.

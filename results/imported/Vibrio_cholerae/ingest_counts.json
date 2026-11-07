@@ -1,0 +1,22 @@
+{
+  "Vibrio_cholerae/amr": {
+    "raw_rows": 21214,
+    "blank_lines": 0,
+    "wrong_field_count": 0,
+    "stray_cr": 0,
+    "file": "PDG000000055.1023.amr.metadata.tsv",
+    "columns": 67,
+    "parquet_rows": 21214,
+    "match": true
+  },
+  "Vibrio_cholerae/clusters": {
+    "raw_rows": 18027,
+    "blank_lines": 0,
+    "wrong_field_count": 0,
+    "stray_cr": 0,
+    "file": "PDG000000055.1023.reference_target.cluster_list.tsv",
+    "columns": 4,
+    "parquet_rows": 18027,
+    "match": true
+  }
+}

@@ -11,6 +11,7 @@ from pyspark.sql import functions as F
 
 from analytics import ALL_ORGANISMS, BOTH_DRUGS, RESULTS, load_settings, pool_years, windows
 from clean import PARQUET
+from datasets import core_organisms
 
 OLD_RECORDS_SHOWN = 25
 PUBLISHED = {
@@ -148,8 +149,9 @@ def reconcile_additions(spark, usable):
 def main():
     spark = SparkSession.builder.appName("sanity").config("spark.sql.shuffle.partitions", "16").getOrCreate()
     spark.sparkContext.setLogLevel("WARN")
-    isolates = spark.read.parquet(str(PARQUET / "isolates"))
-    genes = spark.read.parquet(str(PARQUET / "isolate_genes"))
+    core = core_organisms()
+    isolates = spark.read.parquet(str(PARQUET / "isolates")).filter(F.col("organism").isin(core))
+    genes = spark.read.parquet(str(PARQUET / "isolate_genes")).filter(F.col("organism").isin(core))
     seen = spark.read.parquet(str(RESULTS / "first_seen.parquet"))
 
     result = {"genes": {}, "reconciliation": reconcile(spark, isolates)}

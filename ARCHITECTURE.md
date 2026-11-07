@@ -121,7 +121,7 @@ Under the minimum sample, tables keep `n` and `positives` but leave `rate` and l
 | Organism by drug class heatmap (optional) | Which resistance matters for which pathogen? | `prevalence` |
 | Data coverage chart (optional) | Can I trust this view? | `coverage` |
 | Pathogen search (built) | Is this pathogen, strain or disease covered, and how good is the data? | `search_index`, `coverage`, `data_profile.json` (`search_fill`), `pipeline_summary.json`, `config/disease_pathogens.csv`, `config/ncbi_organisms.csv` |
-| Pathogen import (optional, last) | Can I analyse a pathogen not yet imported? | Runs the pipeline; needs Docker and internet |
+| Pathogen import (built) | Can I analyse a pathogen not yet imported? | `src/import_pathogen.py` runs the pipeline for one organism (Docker and internet) into `results/imported/<organism>/`; listed in `config/imported.csv`; the app's Dataset switch reads that folder instead of `results/` |
 
 ## Result files
 All in `results/`.

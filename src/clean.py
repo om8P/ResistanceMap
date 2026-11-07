@@ -13,21 +13,17 @@ from pathlib import Path
 from pyspark.sql import SparkSession, Window
 from pyspark.sql import functions as F
 
+from datasets import read_organisms, results_dir
 from profile_data import add_date_labels, is_empty, is_placeholder, is_real
 
 ROOT = Path(__file__).resolve().parent.parent
 PARQUET = ROOT / "data" / "parquet"
 ORGANISMS = ROOT / "config" / "organisms.csv"
 COUNTRIES = ROOT / "config" / "countries.csv"
-SUMMARY = ROOT / "results" / "pipeline_summary.json"
+SUMMARY = results_dir() / "pipeline_summary.json"
 # Earlier dates are artefacts: 1900-01-01 defaults, and years read as Excel day counts (2021 becomes 1905-07-13).
 EARLIEST_YEAR = 1910
 TEXT_COLUMNS = ["host", "isolation_source", "epi_type"]
-
-
-def read_organisms():
-    with open(ORGANISMS, encoding="utf-8", newline="") as source:
-        return list(csv.DictReader(source))
 
 
 def read_countries(spark):
@@ -135,7 +131,7 @@ def main():
     spark.sparkContext.setLogLevel("WARN")
     countries = read_countries(spark)
 
-    for row in read_organisms():
+    for row in read_organisms(args.organism):
         organism = row["organism"]
         if args.organism and organism != args.organism:
             continue

@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 
-from lib import data, search, ui
+from lib import data, importer, search, ui
 from lib.rules import MIN_SAMPLE
 
 ui.header("Search", "Is a pathogen, serovar, strain or disease covered here, and how good is the data?")
@@ -68,6 +68,8 @@ if len(found["diseases"]):
             if organism in labels:
                 isolates = int(coverage.loc[coverage["organism"] == organism, "isolates"].sum())
                 status = f"In this tool: {isolates:,} sequenced isolates"
+            elif organism in data.imported_datasets():
+                status = "Imported: choose it under Dataset in the sidebar"
             else:
                 status = "Tracked by NCBI, not imported here"
             table.append({"Possible pathogen": ncbi_label(organism), "Status": status,
@@ -107,8 +109,30 @@ if len(found["index"]):
             card(organism, f"index_{organism}")
 
 if found["tracked"]:
-    st.subheader("Tracked by NCBI, not imported here")
-    st.write(", ".join(ncbi_label(o) for o in found["tracked"]) + ". NCBI Pathogen Detection has data for these, but this tool has not imported it, so there are no figures for them here.")
+    st.subheader("Other pathogens NCBI tracks")
+    st.write("NCBI Pathogen Detection has data for these. They are not among the six core organisms, but can be imported: "
+             "the import downloads NCBI's files and runs the same pipeline in Docker, into a separate dataset, so the core figures never change.")
+    for organism in found["tracked"]:
+        status = data.import_status(organism) or {}
+        state = status.get("state")
+        name = ncbi_label(organism)
+        if state == "done":
+            st.success(f"**{name}** is imported. Choose it under Dataset in the sidebar.")
+        elif state in ("starting", "running"):
+            st.info(f"**{name}**: import running, step {status.get('step') or 'starting'}. It takes a few minutes; refresh to update.")
+            st.button("Refresh", key=f"refresh_{organism}")
+        else:
+            if state == "failed":
+                st.error(f"**{name}**: the last import failed. {status.get('error') or ''}")
+            else:
+                st.markdown(f"**{name}**: not imported.")
+            if importer.can_import():
+                if st.button(f"Import {name}", key=f"import_{organism}"):
+                    importer.start(organism)
+                    st.rerun()
+                st.caption("Needs Docker running with the Spark container, and internet access.")
+            else:
+                st.caption(f"To import it, run `{importer.command(organism)}` on a machine with Docker.")
 
 if found["not_covered"]:
     st.info("No match. This tool covers six bacteria, and NCBI Pathogen Detection tracks bacteria and a few fungi, not viruses or parasites.")

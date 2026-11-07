@@ -1,0 +1,20 @@
+{
+  "name": "Vibrio_cholerae",
+  "state": "done",
+  "step": null,
+  "steps": [
+    "download",
+    "ingest",
+    "profile",
+    "clean",
+    "genes",
+    "analytics",
+    "search index"
+  ],
+  "started": "2026-11-07 09:13:48",
+  "error": null,
+  "log": "logs/import_Vibrio_cholerae.log",
+  "updated": "2026-11-07 09:17:26",
+  "taxon": "Vibrio_cholerae",
+  "finished": "2026-11-07 09:17:26"
+}

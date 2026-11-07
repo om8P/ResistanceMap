@@ -18,15 +18,10 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+from datasets import NCBI_LIST, core_organisms, is_core
+
 BASE = "https://ftp.ncbi.nlm.nih.gov/pathogen"
-ORGANISMS = [
-    "Salmonella",
-    "Escherichia_coli_Shigella",
-    "Klebsiella",
-    "Staphylococcus_aureus",
-    "Pseudomonas_aeruginosa",
-    "Acinetobacter",
-]
+ORGANISMS = core_organisms()
 REFERENCE_URL = f"{BASE}/Antimicrobial_resistance/AMRFinderPlus/database/latest"
 REFERENCE_FILES = {"gene_catalog": "ReferenceGeneCatalog.txt", "point_mutations": "AMRProt-mutation.tsv"}
 
@@ -35,7 +30,6 @@ RAW = ROOT / "data" / "raw"
 MANIFEST = RAW / "manifest.json"
 CHUNK = 1024 * 1024
 RETRIES = 5
-NCBI_LIST = ROOT / "config" / "ncbi_organisms.csv"
 NOT_ORGANISMS = {"BioProject_Hierarchy"}
 
 
@@ -121,6 +115,21 @@ def parse_listing(listing):
     return sorted(set(re.findall(r'href="([A-Z][A-Za-z0-9_.-]*)/"', listing)) - NOT_ORGANISMS)
 
 
+def tracked_organisms(path=NCBI_LIST):
+    """Organism groups in config/ncbi_organisms.csv, or none if it has not been written."""
+    if not path.exists():
+        return []
+    with open(path, encoding="utf-8", newline="") as source:
+        return [row["organism"] for row in csv.DictReader(source)]
+
+
+def amr_file_size(organism):
+    """Bytes in an organism's current AMR metadata file, without downloading it."""
+    url = f"{BASE}/Results/{organism}/latest_snps/AMR"
+    name = find_file(url, r"PDG[\w.\-]+\.amr\.metadata\.tsv")
+    return remote_size(f"{url}/{name}")
+
+
 def write_ncbi_list(path=NCBI_LIST):
     with open_url(f"{BASE}/Results/") as response:
         names = parse_listing(response.read().decode("utf-8", "replace"))
@@ -135,7 +144,7 @@ def write_ncbi_list(path=NCBI_LIST):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--organism", choices=ORGANISMS, help="Download one organism only")
+    parser.add_argument("--organism", help="Download one organism only: a core one, or one NCBI tracks")
     parser.add_argument("--with-metadata", choices=ORGANISMS, action="append", default=[],
                         help="Also download this organism's Metadata file for the denominator check")
     parser.add_argument("--list", action="store_true", help="Only write config/ncbi_organisms.csv")
@@ -144,14 +153,19 @@ def main():
         write_ncbi_list()
         return 0
 
+    if args.organism and not is_core(args.organism) and args.organism not in tracked_organisms():
+        parser.error(f"{args.organism} is not a core organism or in config/ncbi_organisms.csv (run with --list)")
+
     manifest = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {"organisms": {}, "reference": {}}
     for organism in [args.organism] if args.organism else ORGANISMS:
         keep_metadata = organism in args.with_metadata or "metadata" in manifest["organisms"].get(organism, {})
         manifest["organisms"][organism] = download_organism(organism, keep_metadata)
         manifest["updated"] = time.strftime("%Y-%m-%d")
         MANIFEST.write_text(json.dumps(manifest, indent=2))
-    for key, name in REFERENCE_FILES.items():
-        manifest["reference"][key] = entry(REFERENCE_URL, "reference", name)
+    # An imported pathogen reuses the core gene catalog, so a newer catalog does not change core results.
+    if not args.organism or is_core(args.organism):
+        for key, name in REFERENCE_FILES.items():
+            manifest["reference"][key] = entry(REFERENCE_URL, "reference", name)
     MANIFEST.write_text(json.dumps(manifest, indent=2))
     print("manifest written", flush=True)
 

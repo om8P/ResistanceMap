@@ -10,12 +10,13 @@ from pathlib import Path
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 
+from datasets import core_organisms, results_dir
 from ingest import clean_name, read_tsv
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "data" / "raw" / "manifest.json"
 PARQUET = ROOT / "data" / "parquet"
-PROFILE = ROOT / "results" / "data_profile.json"
+PROFILE = results_dir() / "data_profile.json"
 
 FILL_COLUMNS = ["collection_date", "geo_loc_name", "host", "isolation_source", "epi_type", "lat_lon",
                 "AST_phenotypes", "AMR_genotypes_core"]
@@ -255,8 +256,9 @@ def main():
     spark = SparkSession.builder.appName("profile").config("spark.sql.shuffle.partitions", "16").getOrCreate()
     spark.sparkContext.setLogLevel("WARN")
 
+    core = core_organisms()
     for organism, record in manifest["organisms"].items():
-        if args.organism and organism != args.organism:
+        if (args.organism and organism != args.organism) or (not args.organism and organism not in core):
             continue
         started = time.time()
         profile["organisms"][organism] = profile_organism(spark, organism, record)

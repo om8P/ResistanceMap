@@ -4,11 +4,12 @@ Keep this file under about 60 lines. Replace old status instead of adding a log.
 
 ## Status
 - **Last updated:** 2026-11-07
-- **Done:** Sessions 1 to 5, all on `master`. Full pipeline rerun on 2026-11-06 from the README steps, download skipped to keep the 2026-11-03 release: every file in `results/` came out identical except `timing.json`. With search: 86 host tests pass; 157 pass and 3 are skipped in the container (2026-11-07).
+- **Done:** Sessions 1 to 5, all on `master`. Full pipeline rerun on 2026-11-06 from the README steps, download skipped to keep the 2026-11-03 release: every file in `results/` came out identical except `timing.json`. With search and import: 98 host tests pass; 164 pass and 3 are skipped in the container (2026-11-07).
 - **Session 5 outputs:** `README.md`; `report/report.md` and `report.docx`, `slides.pptx` (13 slides with speaker notes), `viva_notes.md` (demo script and questions). `report/make_figures.py` writes the figures and `report/numbers.json`, and every report number traces to it. `report/build_docs.py` builds the .docx and .pptx. Demo checked in the app: trend, evidence panel and gene profile match the report.
 - **Results:** tables in `results/`, 20 MB. Reconciliation passes (`results/sanity_checks.json`).
 - **Optional, phase A done (2026-11-07):** pathogen and disease search over the six organisms, offline. New: `src/search_index.py` (`results/search_index.parquet`), `search_fill` in `data_profile.json` (old keys unchanged), `config/disease_pathogens.csv` (28 conditions, hand-written, **user to check every row**), `config/ncbi_organisms.csv` (`download.py --list`, 107 groups), `app/lib/search.py`, Search page. Core results unchanged; `report/numbers.json` differs only in result_files (33). Plan: `C:/Users/ommga/.claude/plans/polymorphic-snuggling-cocoa.md`.
-- **Next:** user checks the disease list. Then phase B, pathogen import (results in `results/imported/<organism>/`, core filtered to `organisms.csv`).
+- **Optional, phase B done (2026-11-07):** pathogen import. `src/import_pathogen.py ORGANISM` (or the Search page button) adds it to `config/imported.csv`, downloads, and runs ingest to search index for it alone in Docker with `RESULTS_DIR=results/imported/<organism>`; status in `status.json` there, log in `logs/import_<organism>.log`. `src/datasets.py` holds the core list and results folder; full runs (ingest, profile, analytics, sanity, method check, timing) are core only. App: sidebar Dataset switch, imported data shows map and trends, early warnings, gene profile and About. Tested with Vibrio cholerae (see `results/findings.md`).
+- **Next:** all planned work is done.
 
 ## Sessions
 - [x] 1. Setup and data audit
@@ -35,13 +36,14 @@ MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit -
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/sanity_checks.py
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/search_index.py   # about 1 minute
 python src/download.py --list   # host, refreshes config/ncbi_organisms.csv
+python src/import_pathogen.py Vibrio_cholerae   # host, Docker running; about 4 minutes for a 16 MB pathogen
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pip install -q --user --default-timeout=120 pytest pandas pyarrow   # again if the container is recreated
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 src/timing.py
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark /opt/spark/bin/spark-submit --driver-memory 4g src/method_check.py
 python src/aware.py   # host, needs data/raw/aware/B09489-eng.xlsx
 python src/glass.py   # host, needs data/raw/glass/
 python -m streamlit run app/app.py   # host, with Docker stopped
-python -m pytest tests/test_app_rules.py tests/test_app_pages.py tests/test_aware.py tests/test_search.py -q -p no:cacheprovider   # host, about 1 minute
+python -m pytest tests/test_app_rules.py tests/test_app_pages.py tests/test_aware.py tests/test_search.py tests/test_import.py -q -p no:cacheprovider   # host, about 1 minute
 MSYS_NO_PATHCONV=1 docker exec resistancemap-spark python3 -m pytest tests -q -p no:cacheprovider   # over 5 minutes, run in the background
 ```
 Timing, all six, rerun 2026-11-06: ingest 119 s, profile 84 s, clean 72 s, genes 113 s, analytics 751 s (local[8]), sanity 41 s, timing job 112 s, method check 28 s. The earlier run took about 3 times longer on a busier machine.
@@ -63,6 +65,7 @@ Limits that shape every page:
 - Session 2: gene lookup rules are in `ARCHITECTURE.md`. Earliest valid year raised to 1910, because 1900 to 1909 dates are artefacts.
 - Session 3 definitions and additions are in `ARCHITECTURE.md`. Added `config/settings.json`, `config/aware.csv`, `config/glass_map.csv`, and pandas and pyarrow in the container.
 - Changed fixed decisions: GLASS and AWaRe as comparison and labelling sources; doctors as possible readers. The user asked for treatment suggestions; drugs are named with evidence, but recommending one stays out because the data cannot show a drug will work. Not-for-clinical-use stays.
+- Optional import: results folder set by the RESULTS_DIR environment variable rather than a --out flag per step (one setting, read by every step through `src/datasets.py`). An import reuses the core gene catalog (no reference download), so the core is unaffected. Taxon is the organism's own point-mutation group or blank.
 - Optional search: matching is whole-word for diseases (so "typhoid" does not find "non-typhoidal"), word-prefix from 4 letters for organism names. Strain is indexed only where seen 5+ times. The host_disease block is one per search, so diseases sharing a word are not double counted. Search shows coverage, not rates by serovar or strain.
 - Session 5: analytics now runs with `--master "local[8]"`. With the default 16 tasks in a 4 GB driver it ran out of Java heap once (`logs/rerun_analytics_oom.log`), though it had passed before. The timing rerun gave Spark 11.2 s and pandas 18.7 s (median job), peak memory 3.93 and 4.97 GB. The report cites these and mentions the earlier 28.7 s and 52.1 s.
 

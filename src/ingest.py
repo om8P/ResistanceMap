@@ -13,10 +13,12 @@ from pathlib import Path
 
 from pyspark.sql import SparkSession
 
+from datasets import core_organisms, is_core, results_dir
+
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "data" / "raw" / "manifest.json"
 PARQUET = ROOT / "data" / "parquet"
-COUNTS = ROOT / "results" / "ingest_counts.json"
+COUNTS = results_dir() / "ingest_counts.json"
 
 
 def read_tsv(spark, path):
@@ -78,13 +80,16 @@ def main():
     spark = SparkSession.builder.appName("ingest").getOrCreate()
     spark.sparkContext.setLogLevel("WARN")
 
+    core = core_organisms()
     for organism, record in manifest["organisms"].items():
-        if args.organism and organism != args.organism:
+        if (args.organism and organism != args.organism) or (not args.organism and organism not in core):
             continue
         for kind in ("amr", "clusters"):
             counts[f"{organism}/{kind}"] = convert(spark, record[kind], PARQUET / kind / organism)
-    for key, record in manifest["reference"].items():
-        counts[f"reference/{key}"] = convert(spark, record, PARQUET / "reference" / key)
+    # An imported pathogen reuses the core gene catalog, so the reference tables stay as they are.
+    if not args.organism or is_core(args.organism):
+        for key, record in manifest["reference"].items():
+            counts[f"reference/{key}"] = convert(spark, record, PARQUET / "reference" / key)
 
     COUNTS.parent.mkdir(exist_ok=True)
     COUNTS.write_text(json.dumps(counts, indent=2))

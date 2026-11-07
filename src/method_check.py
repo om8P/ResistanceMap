@@ -15,6 +15,7 @@ from pyspark.sql import functions as F
 
 from analytics import RESULTS, load_settings, split_drugs, windows, usable
 from clean import PARQUET
+from datasets import core_organisms
 
 METHOD = "amrfinder_analysis_type"
 TOP_GAPS = 5
@@ -71,8 +72,9 @@ def main():
     spark = SparkSession.builder.appName("method").config("spark.sql.shuffle.partitions", "16").getOrCreate()
     spark.sparkContext.setLogLevel("WARN")
     settings = load_settings()
-    isolates = spark.read.parquet(str(PARQUET / "isolates")).cache()
-    genes = spark.read.parquet(str(PARQUET / "isolate_genes"))
+    core = core_organisms()
+    isolates = spark.read.parquet(str(PARQUET / "isolates")).filter(F.col("organism").isin(core)).cache()
+    genes = spark.read.parquet(str(PARQUET / "isolate_genes")).filter(F.col("organism").isin(core))
     bounds = windows(settings, usable(isolates).agg(F.max("year")).first()[0])
     first, last = bounds["rising_from"], bounds["rising_to"]
 
